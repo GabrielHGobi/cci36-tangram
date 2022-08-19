@@ -1,19 +1,37 @@
 import { Mesh, MeshBasicMaterial, Shape, ShapeGeometry, Group, EdgesGeometry, LineBasicMaterial, LineSegments } from '../../../vendor/three/build/three.module.js';
 
-function createTriangle(x, y, scale, color) {
+function createTriangle(name, size, color) {
 
   const triangleShape = new Shape();
 
-  triangleShape.moveTo(x - Math.sqrt(2)/4/3, y - Math.sqrt(2)/4/3);
-  triangleShape.lineTo(x + 2*Math.sqrt(2)/4/3, y - Math.sqrt(2)/4/3);
-  triangleShape.lineTo(x - Math.sqrt(2)/4/3, y + 2*Math.sqrt(2)/4/3);
-  triangleShape.moveTo(x - Math.sqrt(2)/4/3, y - Math.sqrt(2)/4/3);
+  triangleShape.moveTo( - Math.sqrt(2)/4/3, - Math.sqrt(2)/4/3);
+  triangleShape.lineTo( + 2*Math.sqrt(2)/4/3, - Math.sqrt(2)/4/3);
+  triangleShape.lineTo( - Math.sqrt(2)/4/3, + 2*Math.sqrt(2)/4/3);
+  triangleShape.moveTo( - Math.sqrt(2)/4/3, - Math.sqrt(2)/4/3);
   
   // create a geometry and edge geometry
   const geometry = new ShapeGeometry( triangleShape );
   const edge_geometry = new EdgesGeometry( geometry );
-  geometry.scale(scale, scale, 1);  
-  edge_geometry.scale(scale, scale, 1);
+
+  // transform the triangle scale depending on size param
+  switch (size) {
+    case 'small':
+      geometry.scale(1, 1, 1);  
+      edge_geometry.scale(1, 1, 1);
+      break;
+    case 'medium':
+      geometry.scale(Math.sqrt(2), Math.sqrt(2), 1);  
+      edge_geometry.scale(Math.sqrt(2), Math.sqrt(2), 1);
+      break;
+    case 'large':
+      geometry.scale(2, 2, 1);  
+      edge_geometry.scale(2, 2, 1);
+      break;
+    default:
+      console.error("Invalid size param on createTriangle (\"small\", \"medium\", \"large\")");
+      break;
+  }
+  
 
   // create a default Basic material
   const material = new MeshBasicMaterial({color: color});
@@ -27,6 +45,7 @@ function createTriangle(x, y, scale, color) {
 
   // grouping the mesh and the edges
   const triangle = new Group();
+  triangle.name = name;
   triangle.add(mesh);
   triangle.add(edges);
 
