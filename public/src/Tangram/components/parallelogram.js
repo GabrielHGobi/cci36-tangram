@@ -5,9 +5,9 @@ function createParallelogram(name, color) {
   const parallelogramShape = new Shape();
   
   parallelogramShape.moveTo(0, - Math.sqrt(2)/8);
-  parallelogramShape.lineTo( + Math.sqrt(2)/4, - Math.sqrt(2)/8);
+  parallelogramShape.lineTo( - Math.sqrt(2)/4, - Math.sqrt(2)/8);
   parallelogramShape.lineTo(0, + Math.sqrt(2)/8);
-  parallelogramShape.lineTo( - Math.sqrt(2)/4, + Math.sqrt(2)/8);
+  parallelogramShape.lineTo( + Math.sqrt(2)/4, + Math.sqrt(2)/8);
   parallelogramShape.lineTo(0, - Math.sqrt(2)/8);
 
   // create a geometry and edge geometry
