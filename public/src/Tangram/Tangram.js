@@ -4,7 +4,7 @@ import { createCamera } from './components/camera.js';
 import { createSquare } from './components/square.js';
 import { createTriangle } from './components/triangle.js';
 import { createParallelogram } from './components/parallelogram.js';
-import { createHouse } from './backgroundshapes/House.js';
+import { createHouse } from './backgroundshapes/house.js';
 import { createAxis } from './components/axis.js';
 import { createScene } from './components/scene.js';
 
