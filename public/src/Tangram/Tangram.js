@@ -1,10 +1,10 @@
-import { Group, Vector3 } from '../../vendor/three/build/three.module.js';
+import { Group } from '../../vendor/three/build/three.module.js';
 
 import { createCamera } from './components/camera.js';
 import { createSquare } from './components/square.js';
 import { createTriangle } from './components/triangle.js';
 import { createParallelogram } from './components/parallelogram.js';
-
+import { createHouse } from './backgroundshapes/house.js';
 import { createAxis } from './components/axis.js';
 import { createScene } from './components/scene.js';
 
@@ -25,7 +25,10 @@ class Tangram {
         scene = createScene();
         renderer = createRenderer();
         container.append(renderer.domElement);
-        
+
+        this.bgshape = createHouse("house", "#222222");
+        this.bgshape.scale.setScalar(15);
+
         this.tangramos = new Group();
 
         let small_triangle_1 = createTriangle("sT_1", "small", "#f87705");
@@ -52,10 +55,10 @@ class Tangram {
         this.moveToInitalPos();
     
         this.tangramos.scale.setScalar( 15 );
- 
+        
         this.axis = createAxis();
 
-        scene.add(this.axis, this.tangramos);
+        scene.add(this.axis, this.tangramos, this.bgshape);
     }
 
     // Render the scene
@@ -67,13 +70,13 @@ class Tangram {
     moveToInitalPos() {
 
         var sT_1 = this.tangramos.getObjectByName("sT_1");
-        sT_1.translateX(1/2)
-        sT_1.translateY(1/3)
+        sT_1.translateX(1/4)
+        sT_1.translateY(1/12)
         sT_1.rotateZ(-3*Math.PI/4);
         
         var sT_2 = this.tangramos.getObjectByName("sT_2");
-        sT_2.translateX(11/12)
-        sT_2.translateY(3/4)
+        sT_2.translateX(2/3)
+        sT_2.translateY(1/2)
         sT_2.rotateZ(-Math.PI/4);
 
         var lT_1 = this.tangramos.getObjectByName("lT_1");
@@ -92,13 +95,13 @@ class Tangram {
         mT.rotateZ(Math.PI/2);
 
         var P = this.tangramos.getObjectByName("P");
-        P.translateX(3/8)
-        P.translateY(1/8)
+        P.translateX(7/8)
+        P.translateY(5/8)
         P.rotateZ(Math.PI/4);
 
         var S = this.tangramos.getObjectByName("S");
-        S.translateX(3/4)
-        S.translateY(1/2)
+        S.translateX(1/2)
+        S.translateY(1/4)
         S.rotateZ(Math.PI/4);
     }
 
