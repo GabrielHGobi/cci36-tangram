@@ -9,7 +9,7 @@ import { createAxis } from './components/axis.js';
 import { createScene } from './components/scene.js';
 
 import { createRenderer } from './systems/renderer.js';
-
+import { Loop } from './systems/Loop.js';
 
 
 // These variables are module-scoped: we cannot access them
@@ -17,13 +17,14 @@ import { createRenderer } from './systems/renderer.js';
 let camera;
 let renderer;
 let scene;
+let loop;
 
 class Tangram {
     // instance of the Tangram
     constructor(container) {
         camera = createCamera();
         scene = createScene();
-        renderer = createRenderer();
+        loop = new Loop(camera, scene, renderer);
         container.append(renderer.domElement);
         
         this.tangramos = new Group();
@@ -62,6 +63,14 @@ class Tangram {
     render() {
         // draw a single frame
         renderer.render(scene, camera);
+    }
+
+    start() {
+        loop.start();
+    }
+      
+    stop() {
+        loop.stop();
     }
 
     moveToInitalPos() {
