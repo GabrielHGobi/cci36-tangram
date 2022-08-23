@@ -32,7 +32,7 @@ class Tangram {
         container.append(renderer.domElement);
 
         this.bgshape = createHouse("house", "#222222");
-        this.bgshape.scale.setScalar(15);
+        this.bgshape.scale.setScalar(150);
 
         this.tangramos = new Group();
 
@@ -61,7 +61,7 @@ class Tangram {
     
         this.tangramos.scale.setScalar( 150 );
 
-        scene.add(this.tangramos);
+        scene.add(this.tangramos, this.bgshape);
 
         this.control = new MouseController(camera, this.tangramos.children);
 
