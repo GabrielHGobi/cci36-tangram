@@ -1,16 +1,13 @@
-import { PerspectiveCamera } from "../../../vendor/three/build/three.module.js";
+import { OrthographicCamera } from "../../../vendor/three/build/three.module.js";
 
 function createCamera() {
-  const camera = new PerspectiveCamera(
-    45,
-    window.innerWidth / window.innerHeight,
-    1,
-    500
-  );
+  const container = document.querySelector("#scene-container");
+  const width = container.clientWidth;
+  const height = container.clientHeight;
+  const camera = new OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 0);
 
   // move the camera back so we can view the scene
-  camera.position.set(0, 0, 100);
-  camera.lookAt(0, 0, 0);
+  camera.position.set(0, 0, 0);
 
   return camera;
 }
