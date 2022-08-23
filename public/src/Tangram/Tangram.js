@@ -1,5 +1,6 @@
-import { Group, Vector3 } from '../../vendor/three/build/three.module.js';
+import { Group } from '../../vendor/three/build/three.module.js';
 
+import { MouseController } from '../Tangram/systems/MouseController.js';
 import { createCamera } from './components/camera.js';
 import { createSquare } from './components/square.js';
 import { createTriangle } from './components/triangle.js';
@@ -22,6 +23,7 @@ let loop;
 class Tangram {
     // instance of the Tangram
     constructor(container) {
+        renderer = createRenderer();
         camera = createCamera();
         scene = createScene();
         loop = new Loop(camera, scene, renderer);
@@ -52,14 +54,13 @@ class Tangram {
 
         this.moveToInitalPos();
     
-        this.tangramos.scale.setScalar( 15 );
- 
-        this.axis = createAxis();
+        this.tangramos.scale.setScalar( 150 );
 
-        scene.add(this.axis, this.tangramos);
+        scene.add(this.tangramos);
+
+        this.control = new MouseController(camera, this.tangramos.children);
     }
 
-    // Render the scene
     render() {
         // draw a single frame
         renderer.render(scene, camera);
@@ -76,39 +77,62 @@ class Tangram {
     moveToInitalPos() {
 
         var sT_1 = this.tangramos.getObjectByName("sT_1");
-        sT_1.translateX(1/2)
-        sT_1.translateY(1/3)
+        sT_1.translateX(1/2);
+        sT_1.translateY(1/3);
         sT_1.rotateZ(-3*Math.PI/4);
         
         var sT_2 = this.tangramos.getObjectByName("sT_2");
-        sT_2.translateX(11/12)
-        sT_2.translateY(3/4)
+        sT_2.translateX(11/12);
+        sT_2.translateY(3/4);
         sT_2.rotateZ(-Math.PI/4);
 
         var lT_1 = this.tangramos.getObjectByName("lT_1");
-        lT_1.translateX(1/6)
-        lT_1.translateY(1/2)
+        lT_1.translateX(1/6);
+        lT_1.translateY(1/2);
         lT_1.rotateZ(3*Math.PI/4);
         
         var lT_2 = this.tangramos.getObjectByName("lT_2");
-        lT_2.translateX(1/2)
-        lT_2.translateY(5/6)
+        lT_2.translateX(1/2);
+        lT_2.translateY(5/6);
         lT_2.rotateZ(Math.PI/4);
 
         var mT = this.tangramos.getObjectByName("mT");
-        mT.translateX(5/6)
-        mT.translateY(1/6)
+        mT.translateX(5/6);
+        mT.translateY(1/6);
         mT.rotateZ(Math.PI/2);
 
         var P = this.tangramos.getObjectByName("P");
-        P.translateX(3/8)
-        P.translateY(1/8)
+        P.translateX(3/8);
+        P.translateY(1/8);
         P.rotateZ(Math.PI/4);
 
         var S = this.tangramos.getObjectByName("S");
-        S.translateX(3/4)
-        S.translateY(1/2)
+        S.translateX(3/4);
+        S.translateY(1/2);
         S.rotateZ(Math.PI/4);
+    }
+
+    setInitialOrderToRender(){
+        var sT_1 = this.tangramos.getObjectByName("sT_1");
+        sT_1.renderOrder = 0;
+        
+        var sT_2 = this.tangramos.getObjectByName("sT_2");
+        sT_2.renderOrder = 1;
+
+        var lT_1 = this.tangramos.getObjectByName("lT_1");
+        lT_1.renderOrder = 2;
+        
+        var lT_2 = this.tangramos.getObjectByName("lT_2");
+        lT_2.renderOrder = 3;
+
+        var mT = this.tangramos.getObjectByName("mT");
+        mT.renderOrder = 4;
+
+        var P = this.tangramos.getObjectByName("P");
+        P.renderOrder = 5;
+
+        var S = this.tangramos.getObjectByName("S");
+        S.renderOrder = ;
     }
 
   }
