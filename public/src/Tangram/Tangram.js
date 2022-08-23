@@ -6,7 +6,6 @@ import { createSquare } from './components/square.js';
 import { createTriangle } from './components/triangle.js';
 import { createParallelogram } from './components/parallelogram.js';
 
-import { createAxis } from './components/axis.js';
 import { createScene } from './components/scene.js';
 
 import { createRenderer } from './systems/renderer.js';
@@ -132,7 +131,7 @@ class Tangram {
         P.renderOrder = 5;
 
         var S = this.tangramos.getObjectByName("S");
-        S.renderOrder = ;
+        S.renderOrder = 6;
     }
 
   }
