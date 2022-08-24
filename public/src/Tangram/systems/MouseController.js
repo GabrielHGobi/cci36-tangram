@@ -10,31 +10,30 @@ let camera;
 class MouseController {
 
     // instance of the Mouse Controller
-    constructor(cam, dragObj) {
-        let container = document.querySelector("#scene-container");
+    constructor(cam, dragObj, container) {
+       
         let rect = container.getBoundingClientRect();
+        let rl = rect.left;
+        let rt = rect.top;
         mouseDown = false;
         camera = cam;
         draggableObjects = dragObj;
         
-        container.addEventListener('mousedown', function (evt) {
-            evt.preventDefault();
+        container.addEventListener('mousedown', function (evt) {   
             mouseDown = true;
-            mouse.x = ((evt.clientX - rect.left) / container.clientWidth ) * 2 - 1;
-            mouse.y = - ( (evt.clientY - rect.top) / container.clientHeight ) * 2 + 1;
+            mouse.x = ((evt.clientX - rl) / container.clientWidth ) * 2 - 1;
+            mouse.y = - ( (evt.clientY - rt) / container.clientHeight ) * 2 + 1;
         }, false);
 
-        container.addEventListener('mousemove', function (evt) {
-            evt.preventDefault();
+        container.addEventListener('mousemove', function (evt) {        
             if (!mouseDown) {return} // is the button pressed?
             if (!pointInPolygon()) {return} // the mouse is over a polygon?
-            mouse.x = ((evt.clientX - rect.left) / container.clientWidth ) * 2 - 1;
-            mouse.y = - ( (evt.clientY - rect.top) / container.clientHeight ) * 2 + 1;
+            mouse.x = ((evt.clientX - rl) / container.clientWidth ) * 2 - 1;
+            mouse.y = - ( (evt.clientY - rt) / container.clientHeight ) * 2 + 1;
             moveObject();
         }, false);
 
-        container.addEventListener('mouseup', function (evt) {
-            evt.preventDefault();
+        container.addEventListener('mouseup', function (evt) {  
             mouseDown = false;
         }, false);
 
@@ -54,18 +53,19 @@ function pointInPolygon() {
 }
 
 function moveObject() {
-    let i = 0;
     let draggedPiece = null;
     let intersection = null;
-    for(i=0; i<intersectedObjects.length; i++){
-        if(intersectedObjects[i].object.isMesh){ 
-            intersection = intersectedObjects[i].point;
+    let inobj = null;
+    for(let i=0; i<intersectedObjects.length; i++){
+        inobj = intersectedObjects[i];
+        if(inobj.object.isMesh){ 
+            intersection = inobj.point;
             if(!draggedPiece){
-                draggedPiece = intersectedObjects[i].object.parent;   
+                draggedPiece = inobj.object.parent; 
             }
             else {
-                if(intersectedObjects[i].object.parent.renderOrder > draggedPiece.renderOrder){
-                    draggedPiece = intersectedObjects[i].object.parent;
+                if(inobj.object.parent.renderOrder > draggedPiece.renderOrder){
+                    draggedPiece = inobj.object.parent;
                 }
             }
         }
