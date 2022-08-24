@@ -9,7 +9,7 @@ function main() {
   const tangram = new Tangram(container);
 
   // 2. Render the scene
-  tangram.render();
+  tangram.start();
 }
 
 // call main to start the app

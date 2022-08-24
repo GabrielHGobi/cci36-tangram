@@ -1,15 +1,18 @@
 import { Group } from '../../vendor/three/build/three.module.js';
 
+import { MouseController } from '../Tangram/systems/MouseController.js';
 import { createCamera } from './components/camera.js';
 import { createSquare } from './components/square.js';
 import { createTriangle } from './components/triangle.js';
 import { createParallelogram } from './components/parallelogram.js';
+
 import { createHouse } from './backgroundshapes/house.js';
 import { createAxis } from './components/axis.js';
+
 import { createScene } from './components/scene.js';
 
 import { createRenderer } from './systems/renderer.js';
-
+import { Loop } from './systems/Loop.js';
 
 
 // These variables are module-scoped: we cannot access them
@@ -17,17 +20,19 @@ import { createRenderer } from './systems/renderer.js';
 let camera;
 let renderer;
 let scene;
+let loop;
 
 class Tangram {
     // instance of the Tangram
     constructor(container) {
+        renderer = createRenderer();
         camera = createCamera();
         scene = createScene();
-        renderer = createRenderer();
+        loop = new Loop(camera, scene, renderer);
         container.append(renderer.domElement);
 
         this.bgshape = createHouse("house", "#222222");
-        this.bgshape.scale.setScalar(15);
+        this.bgshape.scale.setScalar(150);
 
         this.tangramos = new Group();
 
@@ -54,17 +59,25 @@ class Tangram {
 
         this.moveToInitalPos();
     
-        this.tangramos.scale.setScalar( 15 );
-        
-        this.axis = createAxis();
+        this.tangramos.scale.setScalar( 150 );
 
-        scene.add(this.axis, this.tangramos, this.bgshape);
+        scene.add(this.tangramos, this.bgshape);
+
+        this.control = new MouseController(camera, this.tangramos.children);
+
     }
 
-    // Render the scene
     render() {
         // draw a single frame
         renderer.render(scene, camera);
+    }
+
+    start() {
+        loop.start();
+    }
+      
+    stop() {
+        loop.stop();
     }
 
     moveToInitalPos() {
@@ -80,21 +93,22 @@ class Tangram {
         sT_2.rotateZ(-Math.PI/4);
 
         var lT_1 = this.tangramos.getObjectByName("lT_1");
-        lT_1.translateX(1/6)
-        lT_1.translateY(1/2)
+        lT_1.translateX(1/6);
+        lT_1.translateY(1/2);
         lT_1.rotateZ(3*Math.PI/4);
         
         var lT_2 = this.tangramos.getObjectByName("lT_2");
-        lT_2.translateX(1/2)
-        lT_2.translateY(5/6)
+        lT_2.translateX(1/2);
+        lT_2.translateY(5/6);
         lT_2.rotateZ(Math.PI/4);
 
         var mT = this.tangramos.getObjectByName("mT");
-        mT.translateX(5/6)
-        mT.translateY(1/6)
+        mT.translateX(5/6);
+        mT.translateY(1/6);
         mT.rotateZ(Math.PI/2);
 
         var P = this.tangramos.getObjectByName("P");
+
         P.translateX(7/8)
         P.translateY(5/8)
         P.rotateZ(Math.PI/4);
@@ -103,6 +117,29 @@ class Tangram {
         S.translateX(1/2)
         S.translateY(1/4)
         S.rotateZ(Math.PI/4);
+    }
+
+    setInitialOrderToRender(){
+        var sT_1 = this.tangramos.getObjectByName("sT_1");
+        sT_1.renderOrder = 0;
+        
+        var sT_2 = this.tangramos.getObjectByName("sT_2");
+        sT_2.renderOrder = 1;
+
+        var lT_1 = this.tangramos.getObjectByName("lT_1");
+        lT_1.renderOrder = 2;
+        
+        var lT_2 = this.tangramos.getObjectByName("lT_2");
+        lT_2.renderOrder = 3;
+
+        var mT = this.tangramos.getObjectByName("mT");
+        mT.renderOrder = 4;
+
+        var P = this.tangramos.getObjectByName("P");
+        P.renderOrder = 5;
+
+        var S = this.tangramos.getObjectByName("S");
+        S.renderOrder = 6;
     }
 
   }
