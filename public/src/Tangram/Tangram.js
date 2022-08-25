@@ -7,7 +7,6 @@ import { createTriangle } from './components/triangle.js';
 import { createParallelogram } from './components/parallelogram.js';
 
 import { createHouse } from './backgroundshapes/house.js';
-import { createAxis } from './components/axis.js';
 
 import { createScene } from './components/scene.js';
 
@@ -32,7 +31,7 @@ class Tangram {
         container.append(renderer.domElement);
 
         this.bgshape = createHouse("house", "#222222");
-        this.bgshape.scale.setScalar(150);
+        this.bgshape.scale.setScalar(300);
 
         this.tangramos = new Group();
 
@@ -59,15 +58,20 @@ class Tangram {
 
         this.moveToInitalPos();
     
-        this.tangramos.scale.setScalar( 150 );
+        this.tangramos.scale.setScalar( 300 );
 
+        this.tangramos.translateX(-350);
+        this.tangramos.translateY(-100);
+        this.bgshape.translateX(-500);
+        this.bgshape.translateY(-100);
         scene.add(this.tangramos, this.bgshape);
 
-        this.control = new MouseController(camera, this.tangramos.children);
+        this.control = new MouseController(camera, this.tangramos.children, container);
 
     }
-
+    
     render() {
+        requestAnimationFrame( render );
         // draw a single frame
         renderer.render(scene, camera);
     }
