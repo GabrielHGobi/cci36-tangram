@@ -6,46 +6,50 @@ let mouseDown;
 let mouse = new Vector2();
 let raycaster = new Raycaster();
 let camera;
+let draggedPiece = null;
+let intersection = null;
+let tangramos = null;
+let inobj = null;
 
 class MouseController {
 
     // instance of the Mouse Controller
     constructor(cam, dragObj, container) {
-       
+
         let rect = container.getBoundingClientRect();
         let rl = rect.left;
         let rt = rect.top;
         mouseDown = false;
         camera = cam;
         draggableObjects = dragObj;
-        
-        container.addEventListener('mousedown', function (evt) {   
+
+        container.addEventListener('mousedown', function (evt) {
             mouseDown = true;
-            mouse.x = ((evt.clientX - rl) / container.clientWidth ) * 2 - 1;
-            mouse.y = - ( (evt.clientY - rt) / container.clientHeight ) * 2 + 1;
+            mouse.x = ((evt.clientX - rl) / container.clientWidth) * 2 - 1;
+            mouse.y = - ((evt.clientY - rt) / container.clientHeight) * 2 + 1;
         }, false);
 
-        container.addEventListener('mousemove', function (evt) {        
-            if (!mouseDown) {return} // is the button pressed?
-            if (!pointInPolygon()) {return} // the mouse is over a polygon?
-            mouse.x = ((evt.clientX - rl) / container.clientWidth ) * 2 - 1;
-            mouse.y = - ( (evt.clientY - rt) / container.clientHeight ) * 2 + 1;
+        container.addEventListener('mousemove', function (evt) {
+            if (!mouseDown) { return } // is the button pressed?
+            if (!pointInPolygon()) { return } // the mouse is over a polygon?
+            mouse.x = ((evt.clientX - rl) / container.clientWidth) * 2 - 1;
+            mouse.y = - ((evt.clientY - rt) / container.clientHeight) * 2 + 1;
             moveObject();
         }, false);
 
-        container.addEventListener('mouseup', function (evt) {  
+        container.addEventListener('mouseup', function (evt) {
             mouseDown = false;
         }, false);
 
     }
-  
+
 }
 
 
 function pointInPolygon() {
     raycaster.setFromCamera(mouse, camera);
     const intersects = raycaster.intersectObjects(draggableObjects);
-    if(intersects.length != 0){
+    if (intersects.length != 0) {
         intersectedObjects = intersects;
         return true;
     }
@@ -53,31 +57,30 @@ function pointInPolygon() {
 }
 
 function moveObject() {
-    let draggedPiece = null;
-    let intersection = null;
-    let inobj = null;
-    for(let i=0; i<intersectedObjects.length; i++){
+    draggedPiece = null;
+    inobj = null;
+    for (let i = 0; i < intersectedObjects.length; i++) {
         inobj = intersectedObjects[i];
-        if(inobj.object.isMesh){ 
+        if (inobj.object.isMesh) {
             intersection = inobj.point;
-            if(!draggedPiece){
-                draggedPiece = inobj.object.parent; 
+            if (!draggedPiece) {
+                draggedPiece = inobj.object.parent;
             }
             else {
-                if(inobj.object.parent.renderOrder > draggedPiece.renderOrder){
+                if (inobj.object.parent.renderOrder > draggedPiece.renderOrder) {
                     draggedPiece = inobj.object.parent;
                 }
             }
         }
     }
 
-    let tangramos = draggedPiece.parent;
-    for(let piece of tangramos.children)
-        if(piece.renderOrder > draggedPiece.renderOrder)
+    tangramos = draggedPiece.parent;
+    for (let piece of tangramos.children)
+        if (piece.renderOrder > draggedPiece.renderOrder)
             piece.renderOrder -= 1;
 
     draggedPiece.renderOrder = 6;
-    
+
     let scene = draggedPiece;
     while (!scene.isScene)
         scene = scene.parent;
@@ -89,5 +92,5 @@ function moveObject() {
 }
 
 
-  
+
 export { MouseController };

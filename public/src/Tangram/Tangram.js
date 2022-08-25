@@ -60,9 +60,9 @@ class Tangram {
     
         this.tangramos.scale.setScalar( 300 );
 
-        this.tangramos.translateX(-450);
+        this.tangramos.translateX(-350);
         this.tangramos.translateY(-100);
-        this.bgshape.translateX(-400);
+        this.bgshape.translateX(-500);
         this.bgshape.translateY(-100);
         scene.add(this.tangramos, this.bgshape);
 
