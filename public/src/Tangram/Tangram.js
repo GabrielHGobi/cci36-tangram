@@ -69,8 +69,9 @@ class Tangram {
         this.control = new MouseController(camera, this.tangramos.children, container);
 
     }
-
+    
     render() {
+        requestAnimationFrame( render );
         // draw a single frame
         renderer.render(scene, camera);
     }
