@@ -1,26 +1,31 @@
 import { Vector2, Raycaster } from '../../../vendor/three/build/three.module.js';
 
-let draggableObjects;
-let mouseDown;
+
 let mouse = new Vector2();
 let raycaster = new Raycaster();
-let camera;
+
 let draggedPiece = null;
 let intersection = null;
 let tangramos = null;
 let meshObj = null;
 
+let camera;
+let draggableObjects;
+let mouseDown;
+let mouseDragging;
+
 class MouseController {
 
     // instance of the Mouse Controller
-    constructor(cam, dragObj, container) {
+    constructor(cam, draggableObjs, container) {
 
         let rect = container.getBoundingClientRect();
         let rl = rect.left;
         let rt = rect.top;
         mouseDown = false;
+        mouseDragging = false;
         camera = cam;
-        draggableObjects = dragObj;
+        draggableObjects = draggableObjs;
 
         container.addEventListener('mousedown', function (evt) {
             mouseDown = true;
@@ -42,13 +47,21 @@ class MouseController {
             }
             
             container.style.cursor = "move";
+            mouseDragging = true;
 
             moveObject();
+
         }, false);
 
         container.addEventListener('mouseup', function (evt) {
             mouseDown = false;
+            mouseDragging = false;
         }, false);
+
+        container.addEventListener('wheel', function (evt) {
+            if(!mouseDragging) { return; }
+            rotateObject(evt.deltaY); 
+        })
 
     }
 
@@ -57,11 +70,11 @@ class MouseController {
 
 function pointInPolygon() {
     raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(draggableObjects);
+    let intersects = raycaster.intersectObjects(draggableObjects);
     let meshObjects = intersects.filter(item => item.object.isMesh);
     if (meshObjects.length != 0 ) {
-        console.log(meshObjects)
-        for(meshObj of meshObjects) {
+        draggedPiece = null;
+        for(meshObj of meshObjects) {     
             intersection = meshObj.point;
             if (!draggedPiece) {
                 draggedPiece = meshObj.object.parent;
@@ -73,17 +86,16 @@ function pointInPolygon() {
             }     
         }     
         return true;
-    }
+    } 
     return false;
 }
 
 function moveObject() {
-    
     tangramos = draggedPiece.parent;
+
     for (let piece of tangramos.children)
         if (piece.renderOrder > draggedPiece.renderOrder)
             piece.renderOrder -= 1;
-
     draggedPiece.renderOrder = 7;
 
     let scene = draggedPiece;
@@ -95,6 +107,10 @@ function moveObject() {
     draggedPiece.position.y = intersection.y;
     tangramos.attach(draggedPiece);
     return;
+}
+
+function rotateObject(delta){
+    draggedPiece.rotateZ(delta/20*Math.PI/180);
 }
 
 
