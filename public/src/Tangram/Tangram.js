@@ -31,8 +31,7 @@ class Tangram {
         container.append(renderer.domElement);
 
         this.bgshape = createHouse("house", "#222222");
-        this.bgshape.scale.setScalar(300);
-
+   
         this.tangramos = new Group();
 
         let small_triangle_1 = createTriangle("sT_1", "small", "#f87705");
@@ -58,12 +57,9 @@ class Tangram {
 
         this.moveToInitalPos();
     
-        this.tangramos.scale.setScalar( 300 );
+        this.tangramos.scale.setScalar(300);
+        this.bgshape.scale.setScalar(300);
 
-        this.tangramos.translateX(-350);
-        this.tangramos.translateY(-100);
-        this.bgshape.translateX(-500);
-        this.bgshape.translateY(-100);
         scene.add(this.tangramos, this.bgshape);
 
         this.control = new MouseController(camera, this.tangramos.children, container);
@@ -71,7 +67,6 @@ class Tangram {
     }
     
     render() {
-        requestAnimationFrame( render );
         // draw a single frame
         renderer.render(scene, camera);
     }
@@ -125,25 +120,25 @@ class Tangram {
 
     setInitialOrderToRender(){
         var sT_1 = this.tangramos.getObjectByName("sT_1");
-        sT_1.renderOrder = 0;
+        sT_1.renderOrder = 1;
         
         var sT_2 = this.tangramos.getObjectByName("sT_2");
-        sT_2.renderOrder = 1;
+        sT_2.renderOrder = 2;
 
         var lT_1 = this.tangramos.getObjectByName("lT_1");
-        lT_1.renderOrder = 2;
+        lT_1.renderOrder = 3;
         
         var lT_2 = this.tangramos.getObjectByName("lT_2");
-        lT_2.renderOrder = 3;
+        lT_2.renderOrder = 4;
 
         var mT = this.tangramos.getObjectByName("mT");
-        mT.renderOrder = 4;
+        mT.renderOrder = 5;
 
         var P = this.tangramos.getObjectByName("P");
-        P.renderOrder = 5;
+        P.renderOrder = 6;
 
         var S = this.tangramos.getObjectByName("S");
-        S.renderOrder = 6;
+        S.renderOrder = 7;
     }
 
   }

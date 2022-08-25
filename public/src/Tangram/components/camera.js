@@ -7,7 +7,7 @@ function createCamera() {
   const camera = new OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 0);
 
   // move the camera back so we can view the scene
-  camera.position.set(0, 0, 0);
+  camera.position.set(450, 100, 0);
 
   return camera;
 }
