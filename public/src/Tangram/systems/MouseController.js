@@ -7,6 +7,7 @@ let raycaster = new Raycaster();
 let draggedPiece = null;
 let intersection = null;
 let tangramos = null;
+let scene = null;
 let meshObj = null;
 
 let camera;
@@ -26,6 +27,8 @@ class MouseController {
         mouseDragging = false;
         camera = cam;
         draggableObjects = draggableObjs;
+        tangramos = draggableObjects[0].parent;
+        scene = tangramos.parent;
 
         container.addEventListener('mousedown', function (evt) {
             mouseDown = true;
@@ -91,21 +94,17 @@ function pointInPolygon() {
 }
 
 function moveObject() {
-    tangramos = draggedPiece.parent;
-
+    
     for (let piece of tangramos.children)
         if (piece.renderOrder > draggedPiece.renderOrder)
             piece.renderOrder -= 1;
     draggedPiece.renderOrder = 7;
 
-    let scene = draggedPiece;
-    while (!scene.isScene)
-        scene = scene.parent;
-
     scene.attach(draggedPiece);
     draggedPiece.position.x = intersection.x;
     draggedPiece.position.y = intersection.y;
     tangramos.attach(draggedPiece);
+    
     return;
 }
 
