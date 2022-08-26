@@ -109,7 +109,10 @@ function moveObject() {
 }
 
 function rotateObject(delta){
-    draggedPiece.rotateZ(delta/25*Math.PI/180);
+    if(delta < 0)
+        draggedPiece.rotateZ(-delta/delta*5*Math.PI/180);
+    else
+        draggedPiece.rotateZ(delta/delta*5*Math.PI/180);
 }
 
 
