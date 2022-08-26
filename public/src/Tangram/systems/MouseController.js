@@ -63,6 +63,7 @@ class MouseController {
 
         container.addEventListener('wheel', function (evt) {
             if(!mouseDragging) { return; }
+            console.log(evt.deltaY);
             rotateObject(evt.deltaY); 
         })
 
@@ -109,7 +110,7 @@ function moveObject() {
 }
 
 function rotateObject(delta){
-    draggedPiece.rotateZ(delta/20*Math.PI/180);
+    draggedPiece.rotateZ(delta/25*Math.PI/180);
 }
 
 
