@@ -59,6 +59,7 @@ class MouseController {
         container.addEventListener('mouseup', function (evt) {
             mouseDown = false;
             mouseDragging = false;
+            checkCompletion();
         }, false);
 
         container.addEventListener('wheel', function (evt) {
@@ -114,6 +115,17 @@ function rotateObject(delta){
     else
         draggedPiece.rotateZ(5*Math.PI/180);
 }
+
+
+function checkCompletion(){
+    return;
+}
+
+
+function polygonIntersectionArea(){
+    return;
+}
+
 
 
 
