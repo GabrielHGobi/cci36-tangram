@@ -52,6 +52,7 @@ function getIntersectionPoints(points1, points2){
 
             
             let den = (p1.x - p2.x)*(p3.y - p4.y) - (p1.y - p2.y)*(p3.x - p4.x)
+            if(den === 0) continue;
 
             let t = ((p1.x - p3.x)*(p3.y - p4.y) - (p1.y - p3.y)*(p3.x - p4.x)) / den;            
             if(t < 0 || t > 1) continue;
@@ -86,7 +87,10 @@ function getPolygonIntersectionArea(poly1, poly2, scene){
     let area1 = getArea(poly1Points);
     let area2 = getArea(poly2Points);
     let interPoints = getIntersectionPoints(poly1Points, poly2Points);
-    showPoints(interPoints, scene);
+    if(interPoints.length != 0){
+        showPoints(interPoints, scene);
+        // Weiler Atherton Alg
+    }
     return;
 }
 
