@@ -1,4 +1,5 @@
 import { Vector2, Raycaster } from '../../../vendor/three/build/three.module.js';
+import { getPolygonIntersectionArea } from '../utils/utils2D.js'
 
 
 let mouse = new Vector2();
@@ -59,6 +60,7 @@ class MouseController {
         container.addEventListener('mouseup', function (evt) {
             mouseDown = false;
             mouseDragging = false;
+            checkCompletion();
         }, false);
 
         container.addEventListener('wheel', function (evt) {
@@ -115,6 +117,11 @@ function rotateObject(delta){
         draggedPiece.rotateZ(5*Math.PI/180);
 }
 
-
+function checkCompletion(){
+    const lT_1 = tangramos.getObjectByName("lT_1");
+    const S = tangramos.getObjectByName("S");
+    getPolygonIntersectionArea(lT_1, S, scene);
+    return;
+}
 
 export { MouseController };
