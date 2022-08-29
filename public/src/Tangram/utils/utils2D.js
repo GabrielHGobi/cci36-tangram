@@ -36,9 +36,6 @@ function getPolygonVertices(poly){
 }
 
 function getIntersectionPoints(points1, points2){
-    // 1: Clipped Polygon
-    // 2: Clipping Polygon
-    
     let intersectionPoints = []
     const n1 = points1.length;
     const n2 = points2.length;
@@ -108,22 +105,32 @@ function showPoints(pointsArray, scene){
     scene.add(dotEnter, dotExit);
 }
 
-function getPolygonIntersectionArea(poly1, poly2, scene){
-    let poly1Points = getPolygonVertices(poly1);
-    let poly2Points = getPolygonVertices(poly2);
-    let area1 = getArea(poly1Points);
-    let area2 = getArea(poly2Points);
-    let interPoints = getIntersectionPoints(poly1Points, poly2Points);
-    if(interPoints.length != 0){
-        showPoints(interPoints, scene);
-        // Weiler Atherton Alg
-        
+function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene){
+    let clippedVertices = getPolygonVertices(clippedPolygon);
+    let clippingVertices = getPolygonVertices(clippingPolygon);
+    let intersectionPoints = getIntersectionPoints(clippedVertices, clippingVertices);
+    if(intersectionPoints.length != 0){
+        showPoints(intersectionPoints, scene);
     }
-    return;
+    
+    // polyVertices = polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints);
+
+    // Descomente para testar
+    // let totalIntersectionArea = 0;
+    // for(let polyVertices of intersectionPolygons){
+    //     totalIntersectionArea += getArea(polyVertices)
+    // }
+    // console.log(totalIntersectionArea);
+    // return totalIntersectionArea;
+}
+
+function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints){
+    let polyVertices = []; // polyVertices vai ser uma array de arrays - uma para cada polígono de interseção
+    return polyVertices;
 }
 
 function getArea(verticesArray){
     return ShapeUtils.area(verticesArray)
 }
 
-export {translatePoints, rotatePoints, scalePoints, getPolygonVertices, getIntersectionPoints, showPoints, getPolygonIntersectionArea}
+export { getPolygonIntersectionArea }
