@@ -5,9 +5,9 @@ function createSquare(name, color) {
   const squareShape = new Shape();
   
   squareShape.moveTo( -Math.sqrt(2)/8, -Math.sqrt(2)/8);
-  squareShape.lineTo( + Math.sqrt(2)/8, -Math.sqrt(2)/8);
+  squareShape.lineTo( - Math.sqrt(2)/8, +Math.sqrt(2)/8);
   squareShape.lineTo( + Math.sqrt(2)/8, + Math.sqrt(2)/8);
-  squareShape.lineTo( - Math.sqrt(2)/8, + Math.sqrt(2)/8);
+  squareShape.lineTo( + Math.sqrt(2)/8, - Math.sqrt(2)/8);
   squareShape.lineTo( - Math.sqrt(2)/8, - Math.sqrt(2)/8)
   
   // create a geometry and edge geometry
