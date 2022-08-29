@@ -1,4 +1,4 @@
-import { Vector2, BufferGeometry, PointsMaterial, Points } from '../../../vendor/three/build/three.module.js';
+import { Vector2, BufferGeometry, PointsMaterial, Points, ShapeUtils } from '../../../vendor/three/build/three.module.js';
 
 function translatePoints(points, translateVec){
     for (let point of points){
@@ -83,9 +83,15 @@ function showPoints(pointsArray, scene){
 function getPolygonIntersectionArea(poly1, poly2, scene){
     let poly1Points = getPolygonVertices(poly1);
     let poly2Points = getPolygonVertices(poly2);
+    let area1 = getArea(poly1Points);
+    let area2 = getArea(poly2Points);
     let interPoints = getIntersectionPoints(poly1Points, poly2Points);
     showPoints(interPoints, scene);
     return;
+}
+
+function getArea(verticesArray){
+    return ShapeUtils.area(verticesArray)
 }
 
 export {translatePoints, rotatePoints, scalePoints, getPolygonVertices, getIntersectionPoints, showPoints, getPolygonIntersectionArea}
