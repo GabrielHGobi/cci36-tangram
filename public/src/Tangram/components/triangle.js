@@ -7,31 +7,11 @@ function createTriangle(name, size, color) {
   triangleShape.moveTo( - Math.sqrt(2)/4/3, - Math.sqrt(2)/4/3);
   triangleShape.lineTo( + 2*Math.sqrt(2)/4/3, - Math.sqrt(2)/4/3);
   triangleShape.lineTo( - Math.sqrt(2)/4/3, + 2*Math.sqrt(2)/4/3);
-  triangleShape.moveTo( - Math.sqrt(2)/4/3, - Math.sqrt(2)/4/3);
+  triangleShape.lineTo( - Math.sqrt(2)/4/3, - Math.sqrt(2)/4/3);
   
   // create a geometry and edge geometry
   const geometry = new ShapeGeometry( triangleShape );
   const edge_geometry = new EdgesGeometry( geometry );
-
-  // transform the triangle scale depending on size param
-  switch (size) {
-    case 'small':
-      geometry.scale(1, 1, 1);  
-      edge_geometry.scale(1, 1, 1);
-      break;
-    case 'medium':
-      geometry.scale(Math.sqrt(2), Math.sqrt(2), 1);  
-      edge_geometry.scale(Math.sqrt(2), Math.sqrt(2), 1);
-      break;
-    case 'large':
-      geometry.scale(2, 2, 1);  
-      edge_geometry.scale(2, 2, 1);
-      break;
-    default:
-      console.error("Invalid size param on createTriangle (\"small\", \"medium\", \"large\")");
-      break;
-  }
-  
 
   // create a default Basic material
   const material = new MeshBasicMaterial({color: color});
@@ -48,6 +28,22 @@ function createTriangle(name, size, color) {
   triangle.name = name;
   triangle.add(mesh);
   triangle.add(edges);
+
+  // transform the triangle scale depending on size param
+  switch (size) {
+    case 'small':
+      triangle.scale.setScalar(1);
+      break;
+    case 'medium':
+      triangle.scale.setScalar(Math.sqrt(2));
+      break;
+    case 'large':
+      triangle.scale.setScalar(2);  
+      break;
+    default:
+      console.error("Invalid size param on createTriangle (\"small\", \"medium\", \"large\")");
+      break;
+  }
 
   return triangle;
 }
