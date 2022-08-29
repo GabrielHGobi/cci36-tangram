@@ -122,8 +122,8 @@ function rotateObject(delta){
 
 function checkCompletion(){
     const house = bgshape.getObjectByName("house");
-    for(let polygon of tangramos.children)
-        getPolygonIntersectionArea(house, polygon, scene);
+    const sq = tangramos.getObjectByName("S")
+    getPolygonIntersectionArea(house, sq, scene);
     return;
 }
 
