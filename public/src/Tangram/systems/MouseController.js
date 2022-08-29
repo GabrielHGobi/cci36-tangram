@@ -9,6 +9,7 @@ let draggedPiece = null;
 let intersection = null;
 let tangramos = null;
 let scene = null;
+let bgshape = null;
 let meshObj = null;
 
 let camera;
@@ -19,7 +20,7 @@ let mouseDragging;
 class MouseController {
 
     // instance of the Mouse Controller
-    constructor(cam, draggableObjs, container) {
+    constructor(cam, draggableObjs, backgroundShape, container) {
 
         let rect = container.getBoundingClientRect();
         let rl = rect.left;
@@ -30,6 +31,8 @@ class MouseController {
         draggableObjects = draggableObjs;
         tangramos = draggableObjects[0].parent;
         scene = tangramos.parent;
+        bgshape = backgroundShape[0].parent;
+
 
         container.addEventListener('mousedown', function (evt) {
             mouseDown = true;
@@ -60,7 +63,7 @@ class MouseController {
         container.addEventListener('mouseup', function (evt) {
             mouseDown = false;
             mouseDragging = false;
-            checkCompletion();
+            checkCompletion(bgshape);
         }, false);
 
         container.addEventListener('wheel', function (evt) {
@@ -118,9 +121,9 @@ function rotateObject(delta){
 }
 
 function checkCompletion(){
-    const lT_1 = tangramos.getObjectByName("lT_1");
-    const S = tangramos.getObjectByName("S");
-    getPolygonIntersectionArea(lT_1, S, scene);
+    const house = bgshape.getObjectByName("house");
+    for(let polygon of tangramos.children)
+        getPolygonIntersectionArea(house, polygon, scene);
     return;
 }
 
