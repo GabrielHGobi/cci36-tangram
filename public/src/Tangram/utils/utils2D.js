@@ -15,7 +15,6 @@ function rotatePoints(points, angle){
     }
 }
 
-
 function scalePoints(points, scale){
     for (let point of points){
         point.multiplyScalar(scale);
@@ -44,11 +43,18 @@ function getIntersectionPoints(points1, points2){
 
         let p1 = points1[i]
         let p2 = points1[(i+1) % n1];
+        let line1 = new Vector2();
+        line1 = p2.clone()
+        line1.sub(p1)
+
 
         for(let j = 0; j < n2; j++){
 
             let p3 = points2[j];
             let p4 =  points2[(j+1) % n2]; 
+            let line2 = new Vector2();
+            line2 = p4.clone()
+            line2.sub(p3)
 
             
             let den = (p1.x - p2.x)*(p3.y - p4.y) - (p1.y - p2.y)*(p3.x - p4.x)
@@ -63,9 +69,10 @@ function getIntersectionPoints(points1, points2){
             let P = new Vector2();
             P.x = p1.x + t*(p2.x - p1.x);
             P.y = p1.y + t*(p2.y - p1.y);
-            
-            console.log(P)
-            intersectionPoints.push(P)
+
+            let crossProd = line1.cross(line2)
+            if(crossProd > 0) intersectionPoints.push({point: P, type: 'enter'})
+            else intersectionPoints.push({point: P, type: 'exit'})
             
         }
     }
@@ -73,29 +80,57 @@ function getIntersectionPoints(points1, points2){
 }
 
 function showPoints(pointsArray, scene){
-    var dotGeometry = new BufferGeometry();
-    dotGeometry.setFromPoints(pointsArray);
-    var dotMaterial = new PointsMaterial( { size: 10, sizeAttenuation: false, color: 'red' } );
-    var dot = new Points( dotGeometry, dotMaterial );
-    dot.scale.setScalar(300);
-    scene.add(dot);
+    let exitPoints = [];
+    let enterPoints = [];
+    for(let P of pointsArray){
+        if(P.type === 'enter') enterPoints.push(P.point)
+        if(P.type === 'exit') exitPoints.push(P.point)
+    }
+
+    let dotGeometryEnter = new BufferGeometry();
+    let dotGeometryExit = new BufferGeometry();
+    
+    let dotMaterialEnter = new PointsMaterial( { size: 10, sizeAttenuation: false, color: 'green' } );
+    let dotMaterialExit = new PointsMaterial( { size: 10, sizeAttenuation: false, color: 'red' } );
+
+    dotGeometryEnter.setFromPoints(enterPoints);
+    dotGeometryExit.setFromPoints(exitPoints);
+
+    let dotEnter = new Points( dotGeometryEnter, dotMaterialEnter );
+    let dotExit = new Points( dotGeometryExit, dotMaterialExit );
+
+    dotEnter.scale.setScalar(300);
+    dotExit.scale.setScalar(300);
+
+    scene.add(dotEnter, dotExit);
 }
 
-function getPolygonIntersectionArea(poly1, poly2, scene){
-    let poly1Points = getPolygonVertices(poly1);
-    let poly2Points = getPolygonVertices(poly2);
-    let area1 = getArea(poly1Points);
-    let area2 = getArea(poly2Points);
-    let interPoints = getIntersectionPoints(poly1Points, poly2Points);
-    if(interPoints.length != 0){
-        showPoints(interPoints, scene);
-        // Weiler Atherton Alg
+function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene){
+    let clippedVertices = getPolygonVertices(clippedPolygon);
+    let clippingVertices = getPolygonVertices(clippingPolygon);
+    let intersectionPoints = getIntersectionPoints(clippedVertices, clippingVertices);
+    if(intersectionPoints.length != 0){
+        showPoints(intersectionPoints, scene);
     }
-    return;
+    
+    // polyVertices = polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints);
+
+    // Descomente para testar
+    // let totalIntersectionArea = 0;
+    // for(let polyVertices of intersectionPolygons){
+    //     totalIntersectionArea += getArea(polyVertices)
+    // }
+    // console.log(totalIntersectionArea);
+    // return totalIntersectionArea;
+}
+
+function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints){
+    let polyVertices = []; // polyVertices vai ser uma array de arrays - uma para cada polígono de interseção
+    return polyVertices;
 }
 
 function getArea(verticesArray){
     return ShapeUtils.area(verticesArray)
 }
 
-export {translatePoints, rotatePoints, scalePoints, getPolygonVertices, getIntersectionPoints, showPoints, getPolygonIntersectionArea}
+export { getPolygonIntersectionArea }

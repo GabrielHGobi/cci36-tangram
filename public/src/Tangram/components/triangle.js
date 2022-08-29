@@ -5,8 +5,8 @@ function createTriangle(name, size, color) {
   const triangleShape = new Shape();
 
   triangleShape.moveTo( - Math.sqrt(2)/4/3, - Math.sqrt(2)/4/3);
-  triangleShape.lineTo( + 2*Math.sqrt(2)/4/3, - Math.sqrt(2)/4/3);
   triangleShape.lineTo( - Math.sqrt(2)/4/3, + 2*Math.sqrt(2)/4/3);
+  triangleShape.lineTo( + 2*Math.sqrt(2)/4/3, - Math.sqrt(2)/4/3);
   triangleShape.lineTo( - Math.sqrt(2)/4/3, - Math.sqrt(2)/4/3);
   
   // create a geometry and edge geometry

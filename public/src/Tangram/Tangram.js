@@ -31,7 +31,10 @@ class Tangram {
         loop = new Loop(camera, scene, renderer);
         container.append(renderer.domElement);
 
-        this.bgshape = createHouse("house", "#222222");
+        this.bgShape = new Group(); 
+        
+        let house = createHouse("house", "#222222");
+        this.bgShape.add(house);
    
         this.tangramos = new Group();
 
@@ -59,11 +62,11 @@ class Tangram {
         this.moveToInitalPos();
     
         this.tangramos.scale.setScalar(300);
-        this.bgshape.scale.setScalar(300);
+        this.bgShape.scale.setScalar(300);
 
-        scene.add(this.tangramos, this.bgshape);
+        scene.add(this.tangramos, this.bgShape);
 
-        this.control = new MouseController(camera, this.tangramos.children, container);
+        this.control = new MouseController(camera, this.tangramos.children, this.bgShape.children, container);
 
         const resizer = new Resizer(container, camera, renderer);
     }

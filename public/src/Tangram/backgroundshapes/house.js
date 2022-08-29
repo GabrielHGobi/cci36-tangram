@@ -15,6 +15,7 @@ function createHouse(name, color) {
   houseShape.lineTo( 2 + Math.sqrt(2)/8, 1/2 + Math.sqrt(2)/4);
   houseShape.lineTo( 2 - Math.sqrt(2)/8, 1/2);
   houseShape.lineTo( 2 , 1/2);
+  houseShape.lineTo(2, 0);
 
 
   // create a geometry and edge geometry
