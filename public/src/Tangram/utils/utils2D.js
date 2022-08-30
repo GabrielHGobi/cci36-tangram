@@ -79,6 +79,18 @@ function getIntersectionPoints(points1, points2){
     return intersectionPoints;
 }
 
+function clockwiseSortPoints(points, convexPolygon){
+    const center = convexPolygon.position;
+    points.sort((a, b) => {
+        let angleA = (Math.atan2(a.point.x - center.x, a.point.y - center.y) + 2*Math.PI) % (2*Math.PI);
+        let angleB = (Math.atan2(b.point.x - center.x, b.point.y - center.y) + 2*Math.PI) % (2*Math.PI);
+        if( angleA < angleB ) return -1;
+        if( angleA > angleB ) return 1;
+        return 0;
+    });
+    return points;
+}
+
 function showPoints(pointsArray, scene){
     let exitPoints = [];
     let enterPoints = [];
@@ -108,7 +120,9 @@ function showPoints(pointsArray, scene){
 function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene){
     let clippedVertices = getPolygonVertices(clippedPolygon);
     let clippingVertices = getPolygonVertices(clippingPolygon);
-    let intersectionPoints = getIntersectionPoints(clippedVertices, clippingVertices);
+    let intersectionPointsUnsorted = getIntersectionPoints(clippedVertices, clippingVertices);
+    let intersectionPoints = clockwiseSortPoints(intersectionPointsUnsorted, clippingPolygon);
+    console.log(intersectionPoints);
     if(intersectionPoints.length != 0){
         showPoints(intersectionPoints, scene);
     }
