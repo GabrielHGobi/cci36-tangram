@@ -46,13 +46,13 @@ class MouseController {
             if (!pointInPolygon()) { // the mouse is over a polygon?
                 container.style.cursor = "default";
                 return;
-            } 
+            }
 
             if (!mouseDown) { // is the button pressed?
                 container.style.cursor = "pointer";
                 return;
             }
-            
+
             container.style.cursor = "move";
             mouseDragging = true;
 
@@ -67,8 +67,8 @@ class MouseController {
         }, false);
 
         container.addEventListener('wheel', function (evt) {
-            if(!mouseDragging) { return; }
-            rotateObject(evt.deltaY); 
+            if (!mouseDragging) { return; }
+            rotateObject(evt.deltaY);
         })
 
     }
@@ -80,9 +80,9 @@ function pointInPolygon() {
     raycaster.setFromCamera(mouse, camera);
     let intersects = raycaster.intersectObjects(draggableObjects);
     let meshObjects = intersects.filter(item => item.object.isMesh);
-    if (meshObjects.length != 0 ) {
+    if (meshObjects.length != 0) {
         draggedPiece = null;
-        for(meshObj of meshObjects) {     
+        for (meshObj of meshObjects) {
             intersection = meshObj.point;
             if (!draggedPiece) {
                 draggedPiece = meshObj.object.parent;
@@ -91,15 +91,15 @@ function pointInPolygon() {
                 if (meshObj.object.parent.renderOrder > draggedPiece.renderOrder) {
                     draggedPiece = meshObj.object.parent;
                 }
-            }     
-        }     
+            }
+        }
         return true;
-    } 
+    }
     return false;
 }
 
 function moveObject() {
-    
+
     for (let piece of tangramos.children)
         if (piece.renderOrder > draggedPiece.renderOrder)
             piece.renderOrder -= 1;
@@ -109,21 +109,34 @@ function moveObject() {
     draggedPiece.position.x = intersection.x;
     draggedPiece.position.y = intersection.y;
     tangramos.attach(draggedPiece);
-    
+
     return;
 }
 
-function rotateObject(delta){
-    if(delta < 0)
-        draggedPiece.rotateZ(-5*Math.PI/180);
+function rotateObject(delta) {
+    if (delta < 0)
+        draggedPiece.rotateZ(-5 * Math.PI / 180);
     else
-        draggedPiece.rotateZ(5*Math.PI/180);
+        draggedPiece.rotateZ(5 * Math.PI / 180);
 }
 
-function checkCompletion(){
+function checkCompletion() {
     const house = bgshape.getObjectByName("house");
-    const sq = tangramos.getObjectByName("S")
-    getPolygonIntersectionArea(house, sq, scene);
+    const P = tangramos.getObjectByName("P")
+    const S = tangramos.getObjectByName("S")
+    const lT1 = tangramos.getObjectByName("lT_1")
+    const lT2 = tangramos.getObjectByName("lT_2")
+    const sT1 = tangramos.getObjectByName("sT_1")
+    const sT2 = tangramos.getObjectByName("sT_2")
+    const mT = tangramos.getObjectByName("mT")
+
+    let intHArea = 0
+    for (let piece1 of tangramos.children) {
+        intHArea += getPolygonIntersectionArea(house, piece1, scene)
+    }
+    // console.log(intHArea)
+    if(intHArea > 0.95)     
+        console.log('You won')
     return;
 }
 

@@ -122,23 +122,20 @@ function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene) {
     let clippingVertices = getPolygonVertices(clippingPolygon);
     let intersectionPointsUnsorted = getIntersectionPoints(clippedVertices, clippingVertices);
     let intersectionPoints = clockwiseSortPoints(intersectionPointsUnsorted, clippingPolygon);
-    if (intersectionPoints.length != 0) {
-        showPoints(intersectionPoints, scene);
-    }
-
-    // console.log(clippedVertices);
-    // console.log(clippingVertices)
-    console.log(intersectionPoints)
-
-    polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints);
-
-    // Descomente para testar
-    // let totalIntersectionArea = 0;
-    // for(let polyVertices of intersectionPolygons){
-    //     totalIntersectionArea += getArea(polyVertices)
+    // if (intersectionPoints.length != 0) {
+    //     showPoints(intersectionPoints, scene);
     // }
-    // console.log(totalIntersectionArea);
-    // return totalIntersectionArea;
+
+    // console.log(clippedVertices)
+    // console.log(clippingVertices)
+    // console.log(intersectionPoints)
+
+    let intersectPolyVertices = polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints, clippingPolygon);
+    
+
+    let ans = getArea(intersectPolyVertices)/getArea(clippedVertices)
+    // console.log(ans)
+    return ans
 }
 
 /* P is in L1-L2 ? */
@@ -207,23 +204,22 @@ function findPoint(P, polyArray) {
     return pos
 }
 
-function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints) {
+function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints, clippingPolygon) {
     let polyVectors = []
     let clippedArray = []
     let clippingArray = []
     clippedArray = listJoin(clippedVertices, intersectionPoints, 'enter', 'exit')
     clippingArray = listJoin(clippingVertices, intersectionPoints, 'exit', 'enter')
-    console.log(clippedArray)
-    console.log(clippingArray)
+    // console.log(clippedArray)
+    // console.log(clippingArray)
 
+    let polyVec = []
     let count = 0
     while (count < intersectionPoints.length) {
-        let polyVec = []
+        polyVec = []
         let idx = 0
         let V = clippedArray[0]
         let eV = null
-
-
 
         while (!(V.type === 'enter' && !V.visited)) {
             V = clippedArray[++idx]
@@ -279,9 +275,15 @@ function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, inters
             }
         }
         polyVec.pop()
-        console.log(polyVec)
     }
+    let returnVertices = []
+    for(let V of polyVec){
+        returnVertices.push(V.point)
+     }
 
+    // console.log(returnVertices)
+    if(!returnVertices.length){}
+    return returnVertices
 }
 
 function getArea(verticesArray) {
