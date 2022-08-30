@@ -126,8 +126,8 @@ function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene) {
         showPoints(intersectionPoints, scene);
     }
 
-    console.log(clippedVertices);
-    console.log(clippingVertices)
+    // console.log(clippedVertices);
+    // console.log(clippingVertices)
     console.log(intersectionPoints)
 
     polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints);
@@ -149,7 +149,7 @@ function inLine(P, L1, L2) {
     return false
 }
 
-function listJoin(polyVertices, intersectionPoints) {
+function listJoin(polyVertices, intersectionPoints, p1, p2) {
     let polyVector = []
     let idxI0 = 0
     let idxI1 = 1
@@ -159,10 +159,10 @@ function listJoin(polyVertices, intersectionPoints) {
     let intP = intersectionPoints[idxInt]
 
     while (idxI0 < polyVertices.length) {
-        polyVector.push(I0)
+        polyVector.push({ point: I0, type: 'vertice' })
         let count = 0
         while (count < intersectionPoints.length) {
-            if (inLine(intP, I0, I1)) {
+            if (inLine(intP, I0, I1) && intP.type === p1) {
                 polyVector.push(intP)
             }
             count++
@@ -173,29 +173,114 @@ function listJoin(polyVertices, intersectionPoints) {
             else {
                 intP = intersectionPoints[++idxInt]
             }
+            if (inLine(intP, I0, I1) && intP.type === p2) {
+                polyVector.push(intP)
+                count++
+                if (idxInt == intersectionPoints.length - 1) {
+                    idxInt = 0
+                    intP = intersectionPoints[0]
+                }
+                else {
+                    intP = intersectionPoints[++idxInt]
+                }
+            }
         }
         I0 = polyVertices[++idxI0]
-        if(idxI1 == polyVertices.length - 1){
+        if (idxI1 == polyVertices.length - 1) {
             I1 = polyVertices[0]
             idxI1 = 0
         }
-        else{
+        else {
             I1 = polyVertices[++idxI1]
         }
     }
     return polyVector
 }
 
+function findPoint(P, polyArray) {
+    let pos = null
+    for (let idx = 0; idx < polyArray.length; idx++) {
+        if (polyArray[idx].point.x == P.point.x && polyArray[idx].point.y == P.point.y)
+            pos = idx
+
+    }
+    return pos
+}
+
 function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints) {
+    let polyVectors = []
     let clippedArray = []
     let clippingArray = []
-    clippedArray = listJoin(clippedVertices, intersectionPoints)
-    clippingArray = listJoin(clippingVertices, intersectionPoints)
+    clippedArray = listJoin(clippedVertices, intersectionPoints, 'enter', 'exit')
+    clippingArray = listJoin(clippingVertices, intersectionPoints, 'exit', 'enter')
     console.log(clippedArray)
     console.log(clippingArray)
 
-    // let AllSubAreasVertices = []
-    // falta busca pelas listas gerando subáreas
+    let count = 0
+    while (count < intersectionPoints.length) {
+        let polyVec = []
+        let idx = 0
+        let V = clippedArray[0]
+        let eV = null
+
+
+
+        while (!(V.type === 'enter' && !V.visited)) {
+            V = clippedArray[++idx]
+        }
+        polyVec.push(V)
+        count++
+        V.visited = true
+        eV = V
+
+        while (!(V.type === 'exit' && !V.visited)) {
+            if (idx == clippedArray.length - 1)
+                idx = 0
+            else
+                idx++
+            V = clippedArray[idx]
+            polyVec.push(V)
+        }
+        count++
+        V.visited = true
+
+        let currentPoly = 'clipping'
+
+        while (!(V == eV)) {
+            if (currentPoly === 'clipping') {
+                idx = findPoint(V, clippingArray)
+                while (!(V == eV) && !(V.type === 'enter' && !V.visited)) {
+                    if (idx == clippingArray.length - 1)
+                        idx = 0
+                    else
+                        idx++
+                    V = clippingArray[idx]
+                    polyVec.push(V)
+                }
+                if (V != eV) {
+                    V.visited = true
+                    count++
+                }
+                currentPoly = 'clipped'
+            }
+            else {
+                idx = findPoint(V, clippedArray)
+                while (!(V.type === 'exit' && !V.visited)) {
+                    if (idx == clippedArray.length - 1)
+                        idx = 0
+                    else
+                        idx++
+                    V = clippedArray[idx]
+                    polyVec.push(V)
+                }
+                V.visited = true
+                count++
+                currentPoly = 'clipping'
+            }
+        }
+        polyVec.pop()
+        console.log(polyVec)
+    }
 
 }
 
