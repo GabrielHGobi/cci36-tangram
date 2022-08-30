@@ -143,10 +143,7 @@ function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene) {
 
 /* P is in L1-L2 ? */
 function inLine(P, L1, L2) {
-    console.log(L1)
-    console.log(L2)
     let num = (P.point.x - L1.x) * (L2.y - L1.y) - (P.point.y - L1.y) * (L2.x - L1.x)
-    console.log(num)
     if (num > -0.000001 && num < 0.000001)
         return true
     return false
