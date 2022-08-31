@@ -122,9 +122,9 @@ function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene) {
     let clippingVertices = getPolygonVertices(clippingPolygon);
     let intersectionPointsUnsorted = getIntersectionPoints(clippedVertices, clippingVertices);
     let intersectionPoints = clockwiseSortPoints(intersectionPointsUnsorted, clippingPolygon);
-    // if (intersectionPoints.length != 0) {
-    //     showPoints(intersectionPoints, scene);
-    // }
+    if (intersectionPoints.length != 0) {
+        showPoints(intersectionPoints, scene);
+    }
 
     // console.log(clippedVertices)
     // console.log(clippingVertices)
@@ -141,7 +141,7 @@ function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene) {
 /* P is in L1-L2 ? */
 function inLine(P, L1, L2) {
     let num = (P.point.x - L1.x) * (L2.y - L1.y) - (P.point.y - L1.y) * (L2.x - L1.x)
-    if (num > -0.000001 && num < 0.000001)
+    if (num > -0.0001 && num < 0.0001)
         return true
     return false
 }
@@ -159,7 +159,14 @@ function listJoin(polyVertices, intersectionPoints, p1, p2) {
         polyVector.push({ point: I0, type: 'vertice' })
         let count = 0
         while (count < intersectionPoints.length) {
-            if (inLine(intP, I0, I1) && intP.type === p1) {
+            let r = 0
+            if(I1.x != I0.x){
+                r = (intP.point.x-I0.x)/(I1.x-I0.x)
+            }
+            else{
+                r = (intP.point.y-I0.y)/(I1.y-I0.y)
+            }
+            if (inLine(intP, I0, I1) && intP.type === p1 && r < 1 && r > 0) {
                 polyVector.push(intP)
             }
             count++
@@ -281,7 +288,7 @@ function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, inters
         returnVertices.push(V.point)
      }
 
-    // console.log(returnVertices)
+    // console.log(polyVec)
     if(!returnVertices.length){}
     return returnVertices
 }
