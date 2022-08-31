@@ -131,6 +131,7 @@ function checkCompletion() {
     for (let piece1 of tangramos.children) {
         intHArea += getPolygonIntersectionArea(house, piece1, scene)
     }
+    console.log(intHArea)
     if(intHArea > 0.95){
         intHArea = 0
         flag = true
