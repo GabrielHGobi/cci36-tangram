@@ -1,4 +1,4 @@
-import { Vector2, BufferGeometry, PointsMaterial, Points, ShapeUtils } from '../../../vendor/three/build/three.module.js';
+import { Vector2, Raycaster, BufferGeometry, PointsMaterial, Points, ShapeUtils } from '../../../vendor/three/build/three.module.js';
 
 function translatePoints(points, translateVec) {
     for (let point of points) {
@@ -117,7 +117,7 @@ function showPoints(pointsArray, scene) {
     scene.add(dotEnter, dotExit);
 }
 
-function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene) {
+function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene, camera, container) {
     let clippedVertices = getPolygonVertices(clippedPolygon);
     let clippingVertices = getPolygonVertices(clippingPolygon);
     let intersectionPointsUnsorted = getIntersectionPoints(clippedVertices, clippingVertices);
@@ -128,12 +128,34 @@ function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene) {
 
     // console.log(clippedVertices)
     // console.log(clippingVertices)
-    console.log(intersectionPoints)
+    // console.log(intersectionPoints)
 
     let intersectPolysVertices = polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints);
     let ans = 0
-    for(let polyVertices of intersectPolysVertices){
-        ans += getArea(polyVertices) / getArea(clippedVertices)
+    if(!intersectPolysVertices.length){
+        // // let rect = container.getBoundingClientRect();
+        // // let rl = rect.left;
+        // // let rt = rect.top;
+        // let pos = new Vector2()
+        
+        // // pos.x = ((clippingPolygon.position.x - rl) / container.clientWidth) * 2 - 1;
+        // // pos.y = - ((clippingPolygon.position.y - rt) / container.clientHeight) * 2 + 1;
+        // pos.x = clippingPolygon.position.x
+        // pos.x = clippingPolygon.position.y
+        
+        // let raycaster = new Raycaster();
+        // raycaster.setFromCamera(pos, camera);
+        // let intersects = raycaster.intersectObjects(clippedPolygon.children);
+
+        // console.log(raycaster)
+        // console.log(intersects)
+        console.log("oi")
+        
+    }
+    else{
+        for(let polyVertices of intersectPolysVertices){
+            ans += getArea(polyVertices) / getArea(clippedVertices)
+        }
     }
     // console.log(ans)
     return ans
@@ -170,7 +192,7 @@ function listJoin(polyVertices, intersectionPoints) {
         let intPrev = 0
         while (count < intersectionPoints.length) {
             let r = 0
-            if (I1.x != I0.x) {
+            if (I1.x - I0.x > 0.001 || I1.x - I0.x < -0.001) {
                 r = (intP.point.x - I0.x) / (I1.x - I0.x)
             }
             else {
@@ -184,6 +206,7 @@ function listJoin(polyVertices, intersectionPoints) {
                 else {
                     if(clockwiseintorder(intPrev, intP, I0)){
                         polyVector.push(intP)
+                        intPrev = intP
                     }
                     else{
                         polyVector.pop()
@@ -264,6 +287,7 @@ function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, inters
             if (currentPoly === 'clipping') {
                 idx = findPoint(V, clippingArray)
                 while (!(V == eV) && !(V.type === 'enter' && !V.visited)) {
+                    console.log(V)
                     if (idx == clippingArray.length - 1)
                         idx = 0
                     else
@@ -299,9 +323,7 @@ function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, inters
         }
         polyVectors.push(returnVertices)
     }
-
-    console.log(polyVectors)
-    if (!polyVectors.length) { /* DETERMINAR CONTIDO OU NÃO */}
+    // console.log(polyVectors)
     return polyVectors
 }
 

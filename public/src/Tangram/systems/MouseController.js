@@ -11,11 +11,13 @@ let tangramos = null;
 let scene = null;
 let bgshape = null;
 let meshObj = null;
+let cont = null;
 
 let camera;
 let draggableObjects;
 let mouseDown;
 let mouseDragging;
+
 
 class MouseController {
 
@@ -25,6 +27,7 @@ class MouseController {
         let rect = container.getBoundingClientRect();
         let rl = rect.left;
         let rt = rect.top;
+        cont = container;
         mouseDown = false;
         mouseDragging = false;
         camera = cam;
@@ -130,8 +133,8 @@ function checkCompletion() {
     // // console.log(intHArea)
     // if(intHArea > 0.95)     
     //     console.log('You won!')
-    let sq = tangramos.getObjectByName("S")
-    let test = getPolygonIntersectionArea(house, sq, scene)
+    let sq = tangramos.getObjectByName("mT")
+    let test = getPolygonIntersectionArea(house, sq, scene, camera, cont)
     console.log(test)
     return;
 }
