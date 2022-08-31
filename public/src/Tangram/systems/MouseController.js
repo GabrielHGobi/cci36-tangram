@@ -127,15 +127,26 @@ function checkCompletion() {
     const house = bgshape.getObjectByName("house");
     
     let intHArea = 0
-    // for (let piece1 of tangramos.children) {
-    //     intHArea += getPolygonIntersectionArea(house, piece1, scene)
-    // }
-    // // console.log(intHArea)
-    // if(intHArea > 0.95)     
-    //     console.log('You won!')
-    let sq = tangramos.getObjectByName("mT")
-    let test = getPolygonIntersectionArea(house, sq, scene, camera, cont)
-    console.log(test)
+    for (let piece1 of tangramos.children) {
+        intHArea += getPolygonIntersectionArea(house, piece1, scene)
+    }
+    if(intHArea > 0.95){
+        intHArea = 0
+        let flag = true
+        for (let piece1 of tangramos.children) {
+            for(let piece2 of tangramos.children){
+                if(piece1 != piece2){
+                    intHArea = getPolygonIntersectionArea(piece2, piece1, scene)
+                    if(intHArea > 0.001){
+                        flag = false
+                    }
+                }
+            }
+        }
+        if(!flag){
+            console.log("YOU WON!")
+        }
+    }
     return;
 }
 

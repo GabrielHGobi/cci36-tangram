@@ -122,9 +122,9 @@ function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene, came
     let clippingVertices = getPolygonVertices(clippingPolygon);
     let intersectionPointsUnsorted = getIntersectionPoints(clippedVertices, clippingVertices);
     let intersectionPoints = clockwiseSortPoints(intersectionPointsUnsorted, clippingPolygon);
-    if (intersectionPoints.length != 0) {
-        showPoints(intersectionPoints, scene);
-    }
+    // if (intersectionPoints.length != 0) {
+    //     showPoints(intersectionPoints, scene);
+    // }
 
     // console.log(clippedVertices)
     // console.log(clippingVertices)
@@ -133,6 +133,7 @@ function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene, came
     let intersectPolysVertices = polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints);
     let ans = 0
     if(!intersectPolysVertices.length){
+        /*********************************************************************************************************************** */
         // // let rect = container.getBoundingClientRect();
         // // let rl = rect.left;
         // // let rt = rect.top;
@@ -148,9 +149,8 @@ function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene, came
         // let intersects = raycaster.intersectObjects(clippedPolygon.children);
 
         // console.log(raycaster)
-        // console.log(intersects)
-        console.log("oi")
-        
+        // console.log(intersects) 
+        /*********************************************************************************************************************** */
     }
     else{
         for(let polyVertices of intersectPolysVertices){
@@ -253,8 +253,8 @@ function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, inters
     let clippingArray = []
     clippedArray = listJoin(clippedVertices, intersectionPoints)
     clippingArray = listJoin(clippingVertices, intersectionPoints)
-    console.log(clippedArray)
-    console.log(clippingArray)
+    // console.log(clippedArray)
+    // console.log(clippingArray)
 
     let count = 0
     while (count < intersectionPoints.length) {
@@ -287,7 +287,6 @@ function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, inters
             if (currentPoly === 'clipping') {
                 idx = findPoint(V, clippingArray)
                 while (!(V == eV) && !(V.type === 'enter' && !V.visited)) {
-                    console.log(V)
                     if (idx == clippingArray.length - 1)
                         idx = 0
                     else
