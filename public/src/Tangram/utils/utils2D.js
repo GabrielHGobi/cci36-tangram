@@ -91,40 +91,6 @@ function clockwiseSortPoints(points, convexPolygon) {
     return points;
 }
 
-function clockwiseIntPartPoints(points, poly) {
-    let rpoints = []
-    let center = new Vector2()
-    center.x = poly.position.x;
-    center.x = poly.position.y;
-    if(poly.name === "house")
-        center.x = 2.5
-        center.y = 0.5 
-    let i0 = 0
-    let i1 = 1
-    let angleA = null
-    let angleB = null
-    let a = points[i0]
-    let b = points[i1]
-
-
-    while(i1 < points.length){    
-        angleA = (Math.atan2(a.point.x - center.x, a.point.y - center.y) + 2 * Math.PI) % (2 * Math.PI);
-        angleB = (Math.atan2(b.point.x - center.x, b.point.y - center.y) + 2 * Math.PI) % (2 * Math.PI);
-        if (angleA < angleB && !(a.type === "vertice" && b.type === "vertice")){
-            rpoints.push(a)
-            rpoints.push(b)
-        }
-        if (angleA > angleB && !(a.type === "vertice" && b.type === "vertice")) {
-            rpoints.push(b)
-            rpoints.push(a)   
-        }
-        a = points[++i0]
-        b = points[++i1]
-    }
-    console.log(rpoints)
-    return rpoints;
-}
-
 function showPoints(pointsArray, scene) {
     let exitPoints = [];
     let enterPoints = [];
@@ -162,12 +128,13 @@ function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene) {
 
     // console.log(clippedVertices)
     // console.log(clippingVertices)
-    // console.log(intersectionPoints)
+    console.log(intersectionPoints)
 
-    let intersectPolyVertices = polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints, clippingPolygon, clippedPolygon);
-    
-
-    let ans = getArea(intersectPolyVertices)/getArea(clippedVertices)
+    let intersectPolysVertices = polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints);
+    let ans = 0
+    for(let polyVertices of intersectPolysVertices){
+        ans += getArea(polyVertices) / getArea(clippedVertices)
+    }
     // console.log(ans)
     return ans
 }
@@ -180,7 +147,15 @@ function inLine(P, L1, L2) {
     return false
 }
 
-function listJoin(polyVertices, intersectionPoints, p1, p2, poly) {
+function clockwiseintorder(intPrev, intP, I0){
+    let dintP = Math.pow((intP.point.x - I0.x),2) + Math.pow((intP.point.y - I0.y),2)
+    let dintPrev = Math.pow((intPrev.point.x - I0.x),2) + Math.pow((intPrev.point.y - I0.y),2)
+
+    if(dintPrev < dintP) return 1
+    return 0
+}
+
+function listJoin(polyVertices, intersectionPoints) {
     let polyVector = []
     let idxI0 = 0
     let idxI1 = 1
@@ -192,16 +167,31 @@ function listJoin(polyVertices, intersectionPoints, p1, p2, poly) {
     while (idxI0 < polyVertices.length) {
         polyVector.push({ point: I0, type: 'vertice' })
         let count = 0
+        let intPrev = 0
         while (count < intersectionPoints.length) {
             let r = 0
-            if(I1.x != I0.x){
-                r = (intP.point.x-I0.x)/(I1.x-I0.x)
+            if (I1.x != I0.x) {
+                r = (intP.point.x - I0.x) / (I1.x - I0.x)
             }
-            else{
-                r = (intP.point.y-I0.y)/(I1.y-I0.y)
+            else {
+                r = (intP.point.y - I0.y) / (I1.y - I0.y)
             }
-            if (inLine(intP, I0, I1) && intP.type === p1 && r < 1 && r > 0) {
-                polyVector.push(intP)
+            if (inLine(intP, I0, I1) && r < 1 && r > 0) {
+                if (intPrev == 0) {
+                    intPrev = intP
+                    polyVector.push(intP)
+                }
+                else {
+                    if(clockwiseintorder(intPrev, intP, I0)){
+                        polyVector.push(intP)
+                    }
+                    else{
+                        polyVector.pop()
+                        polyVector.push(intP)
+                        polyVector.push(intPrev)
+                        intPrev = intP
+                    }
+                }
             }
             count++
             if (idxInt == intersectionPoints.length - 1) {
@@ -210,24 +200,6 @@ function listJoin(polyVertices, intersectionPoints, p1, p2, poly) {
             }
             else {
                 intP = intersectionPoints[++idxInt]
-            }
-            let l = 0
-            if(I1.x != I0.x){
-                l = (intP.point.x-I0.x)/(I1.x-I0.x)
-            }
-            else{
-                l = (intP.point.y-I0.y)/(I1.y-I0.y)
-            }
-            if (inLine(intP, I0, I1) && intP.type === p2 && l < 1 && l > 0) {
-                polyVector.push(intP)
-                count++
-                if (idxInt == intersectionPoints.length - 1) {
-                    idxInt = 0
-                    intP = intersectionPoints[0]
-                }
-                else {
-                    intP = intersectionPoints[++idxInt]
-                }
             }
         }
         I0 = polyVertices[++idxI0]
@@ -239,7 +211,6 @@ function listJoin(polyVertices, intersectionPoints, p1, p2, poly) {
             I1 = polyVertices[++idxI1]
         }
     }
-    // clockwiseIntPartPoints(polyVector, poly)
     return polyVector
 }
 
@@ -253,23 +224,21 @@ function findPoint(P, polyArray) {
     return pos
 }
 
-function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints, clippingPolygon, clippedPolygon) {
+function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints) {
     let polyVectors = []
     let clippedArray = []
     let clippingArray = []
-    clippedArray = listJoin(clippedVertices, intersectionPoints, 'enter', 'exit', clippedPolygon)
-    clippingArray = listJoin(clippingVertices, intersectionPoints, 'exit', 'enter', clippingPolygon)
+    clippedArray = listJoin(clippedVertices, intersectionPoints)
+    clippingArray = listJoin(clippingVertices, intersectionPoints)
     console.log(clippedArray)
     console.log(clippingArray)
 
-    let polyVec = []
     let count = 0
     while (count < intersectionPoints.length) {
-        polyVec = []
+        let polyVec = []
         let idx = 0
         let V = clippedArray[0]
         let eV = null
-
         while (!(V.type === 'enter' && !V.visited)) {
             V = clippedArray[++idx]
         }
@@ -324,15 +293,16 @@ function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, inters
             }
         }
         polyVec.pop()
+        let returnVertices = []
+        for (let V of polyVec) {
+            returnVertices.push(V.point)
+        }
+        polyVectors.push(returnVertices)
     }
-    let returnVertices = []
-    for(let V of polyVec){
-        returnVertices.push(V.point)
-     }
 
-    console.log(polyVec)
-    if(!returnVertices.length){}
-    return returnVertices
+    console.log(polyVectors)
+    if (!polyVectors.length) { /* DETERMINAR CONTIDO OU NÃO */}
+    return polyVectors
 }
 
 function getArea(verticesArray) {
