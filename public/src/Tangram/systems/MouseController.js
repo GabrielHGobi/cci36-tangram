@@ -127,12 +127,13 @@ function checkCompletion() {
     const house = bgshape.getObjectByName("house");
     
     let intHArea = 0
+    let flag = false
     for (let piece1 of tangramos.children) {
         intHArea += getPolygonIntersectionArea(house, piece1, scene)
     }
     if(intHArea > 0.95){
         intHArea = 0
-        let flag = true
+        flag = true
         for (let piece1 of tangramos.children) {
             for(let piece2 of tangramos.children){
                 if(piece1 != piece2){
