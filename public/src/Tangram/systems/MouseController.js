@@ -122,19 +122,12 @@ function rotateObject(delta) {
 
 function checkCompletion() {
     const house = bgshape.getObjectByName("house");
-    const P = tangramos.getObjectByName("P")
-    const S = tangramos.getObjectByName("S")
-    const lT1 = tangramos.getObjectByName("lT_1")
-    const lT2 = tangramos.getObjectByName("lT_2")
-    const sT1 = tangramos.getObjectByName("sT_1")
-    const sT2 = tangramos.getObjectByName("sT_2")
-    const mT = tangramos.getObjectByName("mT")
-
+    
     let intHArea = 0
     for (let piece1 of tangramos.children) {
         intHArea += getPolygonIntersectionArea(house, piece1, scene)
     }
-    // console.log(intHArea)
+    console.log(intHArea)
     if(intHArea > 0.95)     
         console.log('You won')
     return;

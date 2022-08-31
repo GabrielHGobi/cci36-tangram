@@ -91,6 +91,40 @@ function clockwiseSortPoints(points, convexPolygon) {
     return points;
 }
 
+function clockwiseIntPartPoints(points, poly) {
+    let rpoints = []
+    let center = new Vector2()
+    center.x = poly.position.x;
+    center.x = poly.position.y;
+    if(poly.name === "house")
+        center.x = 2.5
+        center.y = 0.5 
+    let i0 = 0
+    let i1 = 1
+    let angleA = null
+    let angleB = null
+    let a = points[i0]
+    let b = points[i1]
+
+
+    while(i1 < points.length){    
+        angleA = (Math.atan2(a.point.x - center.x, a.point.y - center.y) + 2 * Math.PI) % (2 * Math.PI);
+        angleB = (Math.atan2(b.point.x - center.x, b.point.y - center.y) + 2 * Math.PI) % (2 * Math.PI);
+        if (angleA < angleB && !(a.type === "vertice" && b.type === "vertice")){
+            rpoints.push(a)
+            rpoints.push(b)
+        }
+        if (angleA > angleB && !(a.type === "vertice" && b.type === "vertice")) {
+            rpoints.push(b)
+            rpoints.push(a)   
+        }
+        a = points[++i0]
+        b = points[++i1]
+    }
+    console.log(rpoints)
+    return rpoints;
+}
+
 function showPoints(pointsArray, scene) {
     let exitPoints = [];
     let enterPoints = [];
@@ -130,7 +164,7 @@ function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene) {
     // console.log(clippingVertices)
     // console.log(intersectionPoints)
 
-    let intersectPolyVertices = polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints, clippingPolygon);
+    let intersectPolyVertices = polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints, clippingPolygon, clippedPolygon);
     
 
     let ans = getArea(intersectPolyVertices)/getArea(clippedVertices)
@@ -146,7 +180,7 @@ function inLine(P, L1, L2) {
     return false
 }
 
-function listJoin(polyVertices, intersectionPoints, p1, p2) {
+function listJoin(polyVertices, intersectionPoints, p1, p2, poly) {
     let polyVector = []
     let idxI0 = 0
     let idxI1 = 1
@@ -177,7 +211,14 @@ function listJoin(polyVertices, intersectionPoints, p1, p2) {
             else {
                 intP = intersectionPoints[++idxInt]
             }
-            if (inLine(intP, I0, I1) && intP.type === p2) {
+            let l = 0
+            if(I1.x != I0.x){
+                l = (intP.point.x-I0.x)/(I1.x-I0.x)
+            }
+            else{
+                l = (intP.point.y-I0.y)/(I1.y-I0.y)
+            }
+            if (inLine(intP, I0, I1) && intP.type === p2 && l < 1 && l > 0) {
                 polyVector.push(intP)
                 count++
                 if (idxInt == intersectionPoints.length - 1) {
@@ -198,6 +239,7 @@ function listJoin(polyVertices, intersectionPoints, p1, p2) {
             I1 = polyVertices[++idxI1]
         }
     }
+    // clockwiseIntPartPoints(polyVector, poly)
     return polyVector
 }
 
@@ -211,14 +253,14 @@ function findPoint(P, polyArray) {
     return pos
 }
 
-function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints, clippingPolygon) {
+function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints, clippingPolygon, clippedPolygon) {
     let polyVectors = []
     let clippedArray = []
     let clippingArray = []
-    clippedArray = listJoin(clippedVertices, intersectionPoints, 'enter', 'exit')
-    clippingArray = listJoin(clippingVertices, intersectionPoints, 'exit', 'enter')
-    // console.log(clippedArray)
-    // console.log(clippingArray)
+    clippedArray = listJoin(clippedVertices, intersectionPoints, 'enter', 'exit', clippedPolygon)
+    clippingArray = listJoin(clippingVertices, intersectionPoints, 'exit', 'enter', clippingPolygon)
+    console.log(clippedArray)
+    console.log(clippingArray)
 
     let polyVec = []
     let count = 0
@@ -288,7 +330,7 @@ function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, inters
         returnVertices.push(V.point)
      }
 
-    // console.log(polyVec)
+    console.log(polyVec)
     if(!returnVertices.length){}
     return returnVertices
 }
