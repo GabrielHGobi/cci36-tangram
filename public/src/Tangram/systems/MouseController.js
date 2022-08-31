@@ -66,7 +66,7 @@ class MouseController {
         container.addEventListener('mouseup', function (evt) {
             mouseDown = false;
             mouseDragging = false;
-            checkCompletion(bgshape);
+            checkCompletion();
         }, false);
 
         container.addEventListener('wheel', function (evt) {
@@ -148,6 +148,7 @@ function checkCompletion() {
             console.log("YOU WON!")
         }
     }
+    
     return;
 }
 
