@@ -189,7 +189,7 @@ function listJoin(polyVertices, intersectionPoints) {
     while (idxI0 < polyVertices.length) {
         polyVector.push({ point: I0, type: 'vertice' })
         let count = 0
-        let intPrev = 0
+        let inLineIntList = []
         while (count < intersectionPoints.length) {
             let r = 0
             if (I1.x - I0.x > 0.001 || I1.x - I0.x < -0.001) {
@@ -199,20 +199,20 @@ function listJoin(polyVertices, intersectionPoints) {
                 r = (intP.point.y - I0.y) / (I1.y - I0.y)
             }
             if (inLine(intP, I0, I1) && r < 1 && r > 0) {
-                if (intPrev == 0) {
-                    intPrev = intP
-                    polyVector.push(intP)
+                if (inLineIntList.length == 0) {
+                    inLineIntList.push(intP)
                 }
                 else {
-                    if(clockwiseintorder(intPrev, intP, I0)){
-                        polyVector.push(intP)
-                        intPrev = intP
+                    let auxbuffer = []
+                    while(!clockwiseintorder(inLineIntList[inLineIntList.length-1], intP, I0)){
+                        auxbuffer.push(inLineIntList.pop())
+                        if(inLineIntList.length == 0)
+                            break
                     }
-                    else{
-                        polyVector.pop()
-                        polyVector.push(intP)
-                        polyVector.push(intPrev)
-                        intPrev = intP
+                    auxbuffer.push(intP)
+                    let auxV = null
+                    while(auxbuffer.length != 0){
+                        inLineIntList.push(auxbuffer.pop())
                     }
                 }
             }
@@ -224,6 +224,9 @@ function listJoin(polyVertices, intersectionPoints) {
             else {
                 intP = intersectionPoints[++idxInt]
             }
+        }
+        for(let i = 0; i < inLineIntList.length; i++){
+            polyVector.push(inLineIntList[i])
         }
         I0 = polyVertices[++idxI0]
         if (idxI1 == polyVertices.length - 1) {
@@ -253,7 +256,6 @@ function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, inters
     let clippingArray = []
     clippedArray = listJoin(clippedVertices, intersectionPoints)
     clippingArray = listJoin(clippingVertices, intersectionPoints)
-
     let count = 0
     while (count < intersectionPoints.length) {
         let polyVec = []
