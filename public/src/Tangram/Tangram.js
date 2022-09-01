@@ -64,7 +64,7 @@ class Tangram {
         this.tangramos.scale.setScalar(300);
         this.bgShape.scale.setScalar(300);
 
-        scene.add(this.tangramos, this.bgShape);
+        scene.add(this.tangramos , this.bgShape);
 
         this.control = new MouseController(camera, this.tangramos.children, this.bgShape.children, container);
 
@@ -121,6 +121,10 @@ class Tangram {
         S.translateX(1/2)
         S.translateY(1/4)
         S.rotateZ(Math.PI/4);
+
+        var house = this.bgShape.getObjectByName("house");
+        house.translateX(2)
+        house.translateY(1/2)
     }
 
     setInitialOrderToRender(){
