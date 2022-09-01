@@ -1,16 +1,14 @@
-import { Vector2, Raycaster } from '../../../vendor/three/build/three.module.js';
-import { getPolygonIntersectionArea } from '../utils/utils2D.js'
+import { Vector2 } from '../../../vendor/three/build/three.module.js';
+import { getPolygonIntersectionArea, raycastIntersectingObjects } from '../utils/utils2D.js'
 
 
 let mouse = new Vector2();
-let raycaster = new Raycaster();
 
 let draggedPiece = null;
 let intersection = null;
 let tangramos = null;
 let scene = null;
 let bgshape = null;
-let meshObj = null;
 let cont = null;
 
 let camera;
@@ -46,8 +44,9 @@ class MouseController {
             mouse.x = ((evt.clientX - rl) / container.clientWidth) * 2 - 1;
             mouse.y = - ((evt.clientY - rt) / container.clientHeight) * 2 + 1;
 
-            if (!pointInPolygon()) { // the mouse is over a polygon?
-                container.style.cursor = "default";
+            let intersectingObjects = raycastIntersectingObjects(mouse, camera, draggableObjects);
+            if (intersectingObjects.length === 0) { // the mouse is over a polygon?
+                container.style.cursor = "default";   
                 return;
             }
 
@@ -57,6 +56,7 @@ class MouseController {
             }
 
             container.style.cursor = "move";
+            getTopPieceToDrag(intersectingObjects);
             mouseDragging = true;
 
             moveObject();
@@ -66,7 +66,7 @@ class MouseController {
         container.addEventListener('mouseup', function (evt) {
             mouseDown = false;
             mouseDragging = false;
-            checkCompletion();
+            if(checkCompletion()) console.log("YOU WON!");
         }, false);
 
         container.addEventListener('wheel', function (evt) {
@@ -78,27 +78,21 @@ class MouseController {
 
 }
 
-
-function pointInPolygon() {
-    raycaster.setFromCamera(mouse, camera);
-    let intersects = raycaster.intersectObjects(draggableObjects);
-    let meshObjects = intersects.filter(item => item.object.isMesh);
-    if (meshObjects.length != 0) {
+function getTopPieceToDrag(intersectingObjects){
+    if (intersectingObjects.length != 0) {
         draggedPiece = null;
-        for (meshObj of meshObjects) {
-            intersection = meshObj.point;
+        for (let Obj of intersectingObjects) {
+            intersection = Obj.point;
             if (!draggedPiece) {
-                draggedPiece = meshObj.object.parent;
+                draggedPiece = Obj.object.parent;
             }
             else {
-                if (meshObj.object.parent.renderOrder > draggedPiece.renderOrder) {
-                    draggedPiece = meshObj.object.parent;
+                if (Obj.object.parent.renderOrder > draggedPiece.renderOrder) {
+                    draggedPiece = Obj.object.parent;
                 }
             }
         }
-        return true;
     }
-    return false;
 }
 
 function moveObject() {
@@ -129,28 +123,28 @@ function checkCompletion() {
     let intHArea = 0
     let flag = false
     for (let piece1 of tangramos.children) {
-        intHArea += getPolygonIntersectionArea(house, piece1, scene)
+        intHArea += getPolygonIntersectionArea(house, piece1, camera)
     }
+
     console.log(intHArea)
+
     if(intHArea > 0.95){
         intHArea = 0
-        flag = false
-        for (let piece1 of tangramos.children) {
-            for(let piece2 of tangramos.children){
-                if(piece1 != piece2){
+        for (let i=0; i<tangramos.children.length; i++) {
+            let piece1 = tangramos.children[i]
+            for (let j=i+1; j<tangramos.children.length; j++){
+                let piece2 = tangramos.children[j]
                     intHArea = getPolygonIntersectionArea(piece2, piece1, scene)
-                    if(intHArea > 0.001){
-                        flag = true
+                    if(intHArea > 0.1){
+                        return false;
                     }
-                }
             }
         }
-        if(!flag){
-            console.log("YOU WON!")
-        }
+        return true;
+    } else {
+        return false;
     }
-    
-    return;
+         
 }
 
 export { MouseController };
