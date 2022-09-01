@@ -21,6 +21,14 @@ function scalePoints(points, scale) {
     }
 }
 
+function raycastIntersectingObjects(point, camera, objectsArray) {
+    let raycaster = new Raycaster();
+    raycaster.setFromCamera(point, camera);
+    let intersects = raycaster.intersectObjects(objectsArray);
+    let meshObjectsIntersecting = intersects.filter(item => item.object.isMesh);
+    return meshObjectsIntersecting;
+}
+
 function getPolygonVertices(poly) {
     let polyPoints = []
     const curves = poly.children[0].geometry.parameters.shapes.curves;
@@ -117,47 +125,39 @@ function showPoints(pointsArray, scene) {
     scene.add(dotEnter, dotExit);
 }
 
-function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, scene, camera, container) {
+function isPointInPolygon(testPoint, polygonVertices){
+    const nvert = polygonVertices.length;
+    let c = false;
+    for (let i=0, j=nvert-1; i<nvert; j = i++) {
+        let vert1 = polygonVertices[i];
+        let vert2 = polygonVertices[j];
+        if ( ((vert1.y > testPoint.y) != (vert2.y > testPoint.y)) &&
+        (testPoint.x < (vert2.x - vert1.x) * (testPoint.y-vert1.y) / (vert2.y-vert1.y) + vert1.x) )
+        c = !c;
+    }
+    return c;
+
+}
+
+
+function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, camera) {
     let clippedVertices = getPolygonVertices(clippedPolygon);
     let clippingVertices = getPolygonVertices(clippingPolygon);
     let intersectionPointsUnsorted = getIntersectionPoints(clippedVertices, clippingVertices);
     let intersectionPoints = clockwiseSortPoints(intersectionPointsUnsorted, clippingPolygon);
-    // if (intersectionPoints.length != 0) {
-    //     showPoints(intersectionPoints, scene);
-    // }
-
-    // console.log(clippedVertices)
-    // console.log(clippingVertices)
-    // console.log(intersectionPoints)
-
     let intersectPolysVertices = polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints);
+    
     let ans = 0
-    if(!intersectPolysVertices.length){
-        /*********************************************************************************************************************** */
-        // // let rect = container.getBoundingClientRect();
-        // // let rl = rect.left;
-        // // let rt = rect.top;
-        // let pos = new Vector2()
-        
-        // // pos.x = ((clippingPolygon.position.x - rl) / container.clientWidth) * 2 - 1;
-        // // pos.y = - ((clippingPolygon.position.y - rt) / container.clientHeight) * 2 + 1;
-        // pos.x = clippingPolygon.position.x
-        // pos.x = clippingPolygon.position.y
-        
-        // let raycaster = new Raycaster();
-        // raycaster.setFromCamera(pos, camera);
-        // let intersects = raycaster.intersectObjects(clippedPolygon.children);
-
-        // console.log(raycaster)
-        // console.log(intersects) 
-        /*********************************************************************************************************************** */
+    if(intersectPolysVertices.length === 0){
+        if(isPointInPolygon(clippingPolygon.position, clippedVertices)){
+            ans += getArea(clippingVertices) / getArea(clippedVertices)
+        }
     }
     else{
         for(let polyVertices of intersectPolysVertices){
             ans += getArea(polyVertices) / getArea(clippedVertices)
         }
     }
-    // console.log(ans)
     return ans
 }
 
@@ -253,8 +253,6 @@ function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, inters
     let clippingArray = []
     clippedArray = listJoin(clippedVertices, intersectionPoints)
     clippingArray = listJoin(clippingVertices, intersectionPoints)
-    // console.log(clippedArray)
-    // console.log(clippingArray)
 
     let count = 0
     while (count < intersectionPoints.length) {
@@ -322,7 +320,6 @@ function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, inters
         }
         polyVectors.push(returnVertices)
     }
-    // console.log(polyVectors)
     return polyVectors
 }
 
@@ -330,4 +327,4 @@ function getArea(verticesArray) {
     return ShapeUtils.area(verticesArray)
 }
 
-export { getPolygonIntersectionArea }
+export { getPolygonIntersectionArea, raycastIntersectingObjects }
