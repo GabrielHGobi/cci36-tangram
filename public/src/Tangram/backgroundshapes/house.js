@@ -4,18 +4,18 @@ function createHouse(name, color) {
 
   const houseShape = new Shape();
   
-  houseShape.moveTo(2, 0);
-  houseShape.lineTo( 3, 0);
-  houseShape.lineTo(3, 1/2);
-  houseShape.lineTo( 3 + Math.sqrt(2)/8, 1/2);
-  houseShape.lineTo( 5/2 + Math.sqrt(2)/8, 1);
-  houseShape.lineTo( 2 + 3*Math.sqrt(2)/8, 1/2 + Math.sqrt(2)/4);
-  houseShape.lineTo( 2 + 3*Math.sqrt(2)/8, 1/2 + Math.sqrt(2)/2);
-  houseShape.lineTo( 2 + Math.sqrt(2)/8, 1/2 + Math.sqrt(2)/2);
-  houseShape.lineTo( 2 + Math.sqrt(2)/8, 1/2 + Math.sqrt(2)/4);
-  houseShape.lineTo( 2 - Math.sqrt(2)/8, 1/2);
-  houseShape.lineTo( 2 , 1/2);
-  houseShape.lineTo(2, 0);
+  houseShape.moveTo(-1/2, -1/2);
+  houseShape.lineTo(-1/2, 0);
+  houseShape.lineTo( -1/2 - Math.sqrt(2)/8, 0);
+  houseShape.lineTo( -1/2 + Math.sqrt(2)/8, + Math.sqrt(2)/4);
+  houseShape.lineTo( -1/2 + Math.sqrt(2)/8,  + Math.sqrt(2)/2);
+  houseShape.lineTo( -1/2 + 3*Math.sqrt(2)/8, + Math.sqrt(2)/2);
+  houseShape.lineTo( -1/2 + 3*Math.sqrt(2)/8, + Math.sqrt(2)/4);
+  houseShape.lineTo( + Math.sqrt(2)/8, 1/2);
+  houseShape.lineTo( 1/2 + Math.sqrt(2)/8, 0);
+  houseShape.lineTo(1/2, 0);
+  houseShape.lineTo(1/2, -1/2);
+  houseShape.lineTo(-1/2, -1/2);
 
 
   // create a geometry and edge geometry
