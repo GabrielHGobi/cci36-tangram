@@ -20,7 +20,7 @@ let mouseDragging;
 class MouseController {
 
     // instance of the Mouse Controller
-    constructor(cam, draggableObjs, backgroundShape, container) {
+    constructor(cam, draggableObjs, backgroundShape, container, gamingLoop) {
 
         let rect = container.getBoundingClientRect();
         let rl = rect.left;
@@ -66,7 +66,13 @@ class MouseController {
         container.addEventListener('mouseup', function (evt) {
             mouseDown = false;
             mouseDragging = false;
-            if(checkCompletion()) console.log("YOU WON!");
+            if(checkCompletion()) {
+                if (confirm("Desafio completo!\nPressione o botão para jogar outra vez.")) {
+                    location.reload();
+                } else {
+                    gamingLoop.stop();
+                }
+            }
         }, false);
 
         container.addEventListener('wheel', function (evt) {

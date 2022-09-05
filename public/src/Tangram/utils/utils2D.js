@@ -127,16 +127,15 @@ function showPoints(pointsArray, scene) {
 
 function isPointInPolygon(testPoint, polygonVertices){
     const nvert = polygonVertices.length;
-    let c = false;
+    let isInside = false;
     for (let i=0, j=nvert-1; i<nvert; j = i++) {
         let vert1 = polygonVertices[i];
         let vert2 = polygonVertices[j];
         if ( ((vert1.y > testPoint.y) != (vert2.y > testPoint.y)) &&
         (testPoint.x < (vert2.x - vert1.x) * (testPoint.y-vert1.y) / (vert2.y-vert1.y) + vert1.x) )
-        c = !c;
+        isInside = !isInside;
     }
-    return c;
-
+    return isInside;
 }
 
 
@@ -240,15 +239,7 @@ function listJoin(polyVertices, intersectionPoints) {
     return polyVector
 }
 
-function findPoint(P, polyArray) {
-    let pos = null
-    for (let idx = 0; idx < polyArray.length; idx++) {
-        if (polyArray[idx].point.x == P.point.x && polyArray[idx].point.y == P.point.y)
-            pos = idx
 
-    }
-    return pos
-}
 
 function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints) {
     let polyVectors = []
@@ -285,7 +276,7 @@ function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, inters
 
         while (!(V == eV)) {
             if (currentPoly === 'clipping') {
-                idx = findPoint(V, clippingArray)
+                idx = clippingArray.findIndex(P => P.point === V.point)
                 while (!(V == eV) && !(V.type === 'enter' && !V.visited)) {
                     if (idx == clippingArray.length - 1)
                         idx = 0
@@ -301,7 +292,7 @@ function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, inters
                 currentPoly = 'clipped'
             }
             else {
-                idx = findPoint(V, clippedArray)
+                idx = clippingArray.findIndex(P => P.point === V.point)
                 while (!(V.type === 'exit' && !V.visited)) {
                     if (idx == clippedArray.length - 1)
                         idx = 0
