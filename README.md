@@ -11,7 +11,7 @@ Sucintamente, tangram é um jogo de quebra-cabeçãs cujo objetivo é encaixar 7
 ![alt](.//images/tangram.png)
 
 Os movimentos possíveis (aplicados sobre uma peça) são:
-1. Translação, convencionada no jogo desenvolvido como pressionar o botão esquerdo do mouse e movê-lo (mousedown e mousemove):
+1. Translação, convencionada no jogo desenvolvido como pressionar o botão esquerdo do mouse e movê-lo (mousedown e mousemove);
 2. Rotação, convencionada no jogo desenvolvido como pressionar o botão esquerdo do mouse e mover a wheel  para cima - sentido horário - ou para baixo - sentido anti-horrário (mousedown e mousewheel).
 
 ## Função `point-in-polygon`
@@ -162,7 +162,7 @@ function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, inters
 }
 ```
 
-Dado que uma premissa de Weiler-Atherton é a existênica de pontos de interseção, tratou-se a inexistência desse pontos de forma a verificar se o centróide do clippingPolygon estava incluso no clippedPolygon, heurística a qual foi utilizada para indicar quer um polígono continha o outro ao invés de serem disjuntos.
+Dado que uma premissa de Weiler-Atherton é a existênica de pontos de interseção, tratou-se a inexistência desse pontos de forma a verificar se o centróide do clippingPolygon estava incluso no clippedPolygon, heurística a qual foi utilizada para indicar que um polígono continha o outro ao invés de serem disjuntos.
 
 O algorítmo foi então extendido de forma a obter a porcentagem de área coberta pelos polígonos gerados:
 
@@ -190,8 +190,8 @@ function getPolygonIntersectionArea(clippedPolygon, clippingPolygon) {
 ```
 ## Tratamento de fim de jogo
 
-A heurística de término de jogo utilizada foi feita por meio da função `checkcompletion`, de forma que calcula-se a área de interseção da figura de plano de fundo com as peças do tangram e, caso o somatório da porcentagem de área coberta seja superior à 0.95, procede-se verificando dois a dois se a porcentagem em área de sobreposição entre as peças do trangram é inferior a 0.1. 
-Satisfeitas as condições acima, detecta-se o término do jogo:
+A heurística de término de jogo utilizada foi feita por meio da função `checkcompletion`, de forma que se calcula a área de interseção da figura de plano de fundo com as peças do tangram e, caso o somatório da porcentagem de área coberta seja superior à 0.95, procede-se verificando dois a dois se a porcentagem de área de sobreposição entre as peças do tangram é inferior a 0.1. 
+Satisfeitas as condições anteriores, detecta-se o término do jogo:
 
 ```javascript
 function checkCompletion() {
