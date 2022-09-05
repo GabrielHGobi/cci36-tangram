@@ -139,7 +139,7 @@ function isPointInPolygon(testPoint, polygonVertices){
 }
 
 
-function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, camera) {
+function getPolygonIntersectionArea(clippedPolygon, clippingPolygon) {
     let clippedVertices = getPolygonVertices(clippedPolygon);
     let clippingVertices = getPolygonVertices(clippingPolygon);
     let intersectionPointsUnsorted = getIntersectionPoints(clippedVertices, clippingVertices);

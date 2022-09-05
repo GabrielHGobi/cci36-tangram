@@ -6,6 +6,13 @@
 - Thiago Lopes de Araujo
 
 ----------
+## Introdução
+Sucintamente, tangram é um jogo de quebra-cabeçãs cujo objetivo é encaixar 7 peças de forma a sobrepor perfeitamente uma geometria pré-determinada, conforme exemplo a seguir:
+![alt](.//images/tangram.png)
+
+Os movimentos possíveis (aplicados sobre uma peça) são:
+1. Translação, convencionada no jogo desenvolvido como pressionar o botão esquerdo do mouse e movê-lo (mousedown e mousemove):
+2. Rotação, convencionada no jogo desenvolvido como pressionar o botão esquerdo do mouse e mover a wheel  para cima - sentido horário - ou para baixo - sentido anti-horrário (mousedown e mousewheel).
 
 ## Função `point-in-polygon`
 
@@ -62,11 +69,158 @@ function isPointInPolygon(testPoint, polygonVertices){
 }
 ```
 
+## Função `getPolygonIntersectionArea`
 
+A construção da função `getPolygonIntersectionArea` se deu com base no [algorítmo de Weiler-Atherton](https://en.wikipedia.org/wiki/Weiler%E2%80%93Atherton_clipping_algorithm), cuja escolha foi devido à possibilidade de obtenção de clipping de polígonos côncavos.
 
-## Função `polygon-intersection-area`
+De posse dos vértices correspondentes aos clippedPolygon (o qual será "recortado") e ao clippingPolygon (determina a envoltória de "corte"), o algorítmo pode ser descrito conforme os passos a seguir:
 
+1. Determinar os pontos de interseção entre os polígonos (por meio das equações de segmentos);
+2. Gerar listas de pontos em sentido horário tanto para o clippingPolygon quanto para o clippedPolygon incluíndo-se os pontos de interseção;
+3. Partindo-se da lista do clippedPolygon:
+4. Procurar ordenadamente primeiro ponto de entrada não visitado e armazenar vértices subsequentes até encontrar vértice de sáida não visitado;
+5. Encontrar índece do vértice de sáida anterior na lista do outro polígono e percorrer até encontrar um ponto de entrada;
+6. Repetir passos 4 e 5 até enocntrar vértice de entrada inicial; determinando-se um conjunto de vétices que forma um polígon de interseção;
+7. Repetir passos 4, 5 e 6 até que todos os pontos de interseção sejam visitados.
+
+Ao término do algorítmo, obtém-se os conjuntos de vértices que originam os polígonos de interseção polyVectors conforme abaixo:
+
+```javascript
+function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints) {
+    let polyVectors = []
+    let clippedArray = []
+    let clippingArray = []
+    clippedArray = listJoin(clippedVertices, intersectionPoints)
+    clippingArray = listJoin(clippingVertices, intersectionPoints)
+    let count = 0
+    while (count < intersectionPoints.length) {
+        let polyVec = []
+        let idx = 0
+        let V = clippedArray[0]
+        let eV = null
+        while (!(V.type === 'enter' && !V.visited)) {
+            V = clippedArray[++idx]
+        }
+        polyVec.push(V)
+        count++
+        V.visited = true
+        eV = V
+
+        while (!(V.type === 'exit' && !V.visited)) {
+            if (idx == clippedArray.length - 1)
+                idx = 0
+            else
+                idx++
+            V = clippedArray[idx]
+            polyVec.push(V)
+        }
+        count++
+        V.visited = true
+
+        let currentPoly = 'clipping'
+
+        while (!(V == eV)) {
+            if (currentPoly === 'clipping') {
+                idx = clippingArray.findIndex(P => P.point === V.point)
+                while (!(V == eV) && !(V.type === 'enter' && !V.visited)) {
+                    if (idx == clippingArray.length - 1)
+                        idx = 0
+                    else
+                        idx++
+                    V = clippingArray[idx]
+                    polyVec.push(V)
+                }
+                if (V != eV) {
+                    V.visited = true
+                    count++
+                }
+                currentPoly = 'clipped'
+            }
+            else {
+                idx = clippedArray.findIndex(P => P.point === V.point)
+                while (!(V.type === 'exit' && !V.visited)) {
+                    if (idx == clippedArray.length - 1)
+                        idx = 0
+                    else
+                        idx++
+                    V = clippedArray[idx]
+                    polyVec.push(V)
+                }
+                V.visited = true
+                count++
+                currentPoly = 'clipping'
+            }
+        }
+        polyVec.pop()
+        let returnVertices = []
+        for (let V of polyVec) {
+            returnVertices.push(V.point)
+        }
+        polyVectors.push(returnVertices)
+    }
+    return polyVectors
+}
+```
+
+Dado que uma premissa de Weiler-Atherton é a existênica de pontos de interseção, tratou-se a inexistência desse pontos de forma a verificar se o centróide do clippingPolygon estava incluso no clippedPolygon, heurística a qual foi utilizada para indicar quer um polígono continha o outro ao invés de serem disjuntos.
+
+O algorítmo foi então extendido de forma a obter a porcentagem de área coberta pelos polígonos gerados:
+
+```javascript
+function getPolygonIntersectionArea(clippedPolygon, clippingPolygon) {
+    let clippedVertices = getPolygonVertices(clippedPolygon);
+    let clippingVertices = getPolygonVertices(clippingPolygon);
+    let intersectionPointsUnsorted = getIntersectionPoints(clippedVertices, clippingVertices);
+    let intersectionPoints = clockwiseSortPoints(intersectionPointsUnsorted, clippingPolygon);
+    let intersectPolysVertices = polygonClippingWeilerAtherton(clippedVertices, clippingVertices, intersectionPoints);
+    
+    let ans = 0
+    if(intersectPolysVertices.length === 0){
+        if(isPointInPolygon(clippingPolygon.position, clippedVertices)){
+            ans += getArea(clippingVertices) / getArea(clippedVertices)
+        }
+    }
+    else{
+        for(let polyVertices of intersectPolysVertices){
+            ans += getArea(polyVertices) / getArea(clippedVertices)
+        }
+    }
+    return ans
+}
+```
 ## Tratamento de fim de jogo
+
+A heurística de término de jogo utilizada foi feita por meio da função `checkcompletion`, de forma que calcula-se a área de interseção da figura de plano de fundo com as peças do tangram e, caso o somatório da porcentagem de área coberta seja superior à 0.95, procede-se verificando dois a dois se a porcentagem em área de sobreposição entre as peças do trangram é inferior a 0.1. 
+Satisfeitas as condições acima, detecta-se o término do jogo:
+
+```javascript
+function checkCompletion() {
+    const house = bgshape.getObjectByName("house");
+    
+    let intHArea = 0
+    for (let piece1 of tangramos.children) {
+        intHArea += getPolygonIntersectionArea(house, piece1)
+    }
+
+    if(intHArea > 0.95){
+        intHArea = 0
+        for (let i=0; i<tangramos.children.length; i++) {
+            let piece1 = tangramos.children[i]
+            for (let j=i+1; j<tangramos.children.length; j++){
+                let piece2 = tangramos.children[j]
+                    intHArea = getPolygonIntersectionArea(piece2, piece1)
+                    if(intHArea > 0.1){
+                        return false;
+                    }
+            }
+        }
+        return true;
+    } else {
+        return false;
+    }
+         
+}
+```
 
 ## Problema da rotação
 
