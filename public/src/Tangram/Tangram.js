@@ -66,7 +66,7 @@ class Tangram {
 
         scene.add(this.tangramos , this.bgShape);
 
-        this.control = new MouseController(camera, this.tangramos.children, this.bgShape.children, container);
+        this.control = new MouseController(camera, this.tangramos.children, this.bgShape.children, container, loop);
 
         const resizer = new Resizer(container, camera, renderer);
     }
@@ -80,10 +80,6 @@ class Tangram {
         loop.start();
     }
       
-    stop() {
-        loop.stop();
-    }
-
     moveToInitalPos() {
 
         var sT_1 = this.tangramos.getObjectByName("sT_1");
