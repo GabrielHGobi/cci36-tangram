@@ -11,7 +11,7 @@ Sucintamente, tangram é um jogo de quebra-cabeçãs cujo objetivo é encaixar 7
 ![alt](.//images/tangram.png)
 
 Os movimentos possíveis (aplicados sobre uma peça) são:
-1. Translação, convencionada no jogo desenvolvido como pressionar o botão esquerdo do mouse e movê-lo (mousedown e mousemove);
+1. Translação, convencionada no jogo desenvolvido como pressionar o botão esquerdo do mouse e mover o mouse (mousedown e mousemove);
 2. Rotação, convencionada no jogo desenvolvido como pressionar o botão esquerdo do mouse e mover a wheel  para cima - sentido horário - ou para baixo - sentido anti-horrário (mousedown e mousewheel).
 
 ## Função `point-in-polygon`
