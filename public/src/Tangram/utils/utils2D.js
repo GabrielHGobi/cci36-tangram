@@ -139,7 +139,7 @@ function isPointInPolygon(testPoint, polygonVertices){
 }
 
 
-function getPolygonIntersectionArea(clippedPolygon, clippingPolygon, camera) {
+function getPolygonIntersectionArea(clippedPolygon, clippingPolygon) {
     let clippedVertices = getPolygonVertices(clippedPolygon);
     let clippingVertices = getPolygonVertices(clippingPolygon);
     let intersectionPointsUnsorted = getIntersectionPoints(clippedVertices, clippingVertices);
@@ -292,7 +292,7 @@ function polygonClippingWeilerAtherton(clippedVertices, clippingVertices, inters
                 currentPoly = 'clipped'
             }
             else {
-                idx = clippingArray.findIndex(P => P.point === V.point)
+                idx = clippedArray.findIndex(P => P.point === V.point)
                 while (!(V.type === 'exit' && !V.visited)) {
                     if (idx == clippedArray.length - 1)
                         idx = 0
