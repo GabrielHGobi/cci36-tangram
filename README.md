@@ -7,7 +7,7 @@
 
 ----------
 ## Introdução
-Sucintamente, tangram é um jogo de quebra-cabeçãs cujo objetivo é encaixar 7 peças de forma a sobrepor perfeitamente uma geometria pré-determinada, conforme exemplo a seguir:
+Sucintamente, tangram é um jogo quebra-cabeça cujo objetivo é encaixar 7 peças de forma a sobrepor perfeitamente uma geometria pré-determinada, conforme exemplo a seguir:
 ![alt](.//images/tangram.png)
 
 Os movimentos possíveis (aplicados sobre uma peça) são:
